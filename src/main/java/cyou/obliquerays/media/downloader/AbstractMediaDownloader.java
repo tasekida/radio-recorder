@@ -23,6 +23,7 @@ import java.util.Queue;
  */
 abstract class AbstractMediaDownloader<T> implements MediaDownloader<T> {
 
+	/** 処理対象のQUEUE */
 	private final Queue<T> queue;
 
 	/**

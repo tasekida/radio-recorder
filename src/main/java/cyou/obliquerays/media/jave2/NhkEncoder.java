@@ -103,12 +103,10 @@ public class NhkEncoder {
 
 	/**
 	 * NHKラジオをMP3へエンコード
+	 * @return エンコード結果のMP3ファイル
 	 */
 	public Path record() {
 		try {
-//		 	EncodingArgument concat = new ValueArgument(ArgType.OUTFILE, "-filter_complex",
-//	                  ea -> Optional.ofNullable("concat=n=103:v=0:a=1"));
-
 		 	Encoder.addOptionAtIndex(new AudioConcatArgument(), Integer.valueOf(0));
 		 	Encoder encoder = new Encoder();
 		 	encoder.encode(this.media, this.mp3path.toFile(), this.getEncodingAttributes(),new LogProgressListener());

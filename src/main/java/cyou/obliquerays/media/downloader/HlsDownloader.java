@@ -62,6 +62,12 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 	 * HLS（HTTP Live Streaming）インデックスファイルを読み取る処理を初期化
 	 * @param _executor 内部で使用するHTTPクライアントを実行する{@linkplain java.util.concurrent.Executor Executor}
 	 */
+	/**
+	 * HLS（HTTP Live Streaming）インデックスファイルを読み取る処理を初期化
+	 * @param _queue ダウンロード対象のHLSセグメントファイル情報一覧
+	 * @param _executor 内部で使用するHTTPクライアントを実行する{@linkplain java.util.concurrent.Executor Executor}
+	 * @param _m3u8Uri HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI
+	 */
 	public HlsDownloader(Queue<TsMedia> _queue, Executor _executor, URI _m3u8Uri) {
 		super(_queue);
         this.m3u8Uri = _m3u8Uri;

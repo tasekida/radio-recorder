@@ -55,6 +55,7 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 
 	/**
 	 * HLS（HTTP Live Streaming）セグメントファイル（.ts）をダウンロードする処理を初期化
+	 * @param _queue ダウンロード対象のHLSセグメントファイル情報一覧
 	 * @param _executor 内部で使用するHTTPクライアントを実行する{@linkplain java.util.concurrent.Executor Executor}
 	 */
 	public TsDownloader(Queue<TsMedia> _queue, Executor _executor) {
@@ -93,7 +94,6 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 
 	/**
 	 * HLS（HTTP Live Streaming）セグメントファイルをダウンロードして保存
-	 * @return 保存したセグメントファイル（.ts）のPath
 	 */
 	@Override
 	public void run() {
@@ -128,7 +128,7 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 
 	/**
 	 * セグメントファイル（.ts）取得先のURIからセグメントファイル（.ts）を保存するファイルパス生成する関数
-	 * @param _target セグメントファイル（.ts）取得先のURI
+	 * @param _tsUri セグメントファイル（.ts）取得先のURI
 	 * @return セグメントファイル（.ts）を保存するファイルパス生成する関数
 	 */
 	private Path tsUriToTsPath(URI _tsUri) {
@@ -144,7 +144,7 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 
 	/**
 	 * ダウンロード済みのHLSセグメントファイル一覧を取得
-	 * @return tsMedias ダウンロード済みのHLSセグメントファイル一覧
+	 * @return ダウンロード済みのHLSセグメントファイル一覧
 	 */
 	public Set<TsMedia> getTsMedias() {
 		return this.tsMedias;

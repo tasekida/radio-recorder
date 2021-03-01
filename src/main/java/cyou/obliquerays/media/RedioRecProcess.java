@@ -57,8 +57,9 @@ public class RedioRecProcess {
 
 	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
 
-	/** デフォルトコンストラクタ
-	 * @throws IOException
+	/**
+	 * デフォルトコンストラクタ
+	 * @throws IOException ファイル操作失敗
 	 */
 	private RedioRecProcess() throws IOException {
 		Path lockFile = Path.of(this.getClass().getSimpleName() + ".lock");
@@ -72,6 +73,11 @@ public class RedioRecProcess {
 		}
 	}
 
+	/**
+	 * HLSインデックスファイルに記載されているセグメントファイルをダウンロード
+	 * @return ダウンロード済みのHLSセグメントファイル
+	 * @throws InterruptedException ダウンロード中の割り込み
+	 */
 	private List<TsMedia> download() throws InterruptedException {
 		NhkDownloader nhkDownloader = new NhkDownloader(this.executor, NHKURI);
 		var future = this.executor.submit(nhkDownloader);
@@ -81,6 +87,11 @@ public class RedioRecProcess {
 		return nhkDownloader.getTsMedias();
 	}
 
+	/**
+	 * セグメントファイルをMP3ファイルへエンコード
+	 * @param _media ダウンロード済みのHLSセグメントファイル
+	 * @return エンコード後のMP3ファイル
+	 */
 	private Path encode(List<TsMedia> _media) {
 		String target = "./NHK.mp3";
 		var mp3path = Path.of(target);
@@ -91,8 +102,8 @@ public class RedioRecProcess {
 	}
 
 	/**
-	 * 録画実行
-	 * @throws InterruptedException
+	 * 録音実行
+	 * @throws InterruptedException 録音中の割り込み
 	 */
 	private void execute() throws InterruptedException {
 
