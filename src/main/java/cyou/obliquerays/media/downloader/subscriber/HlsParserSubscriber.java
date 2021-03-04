@@ -56,10 +56,7 @@ public class HlsParserSubscriber implements Subscriber<String> {
 	}
 
 	/**
-	 * HTTP送信クライアント実行結果のハンドリング
-	 * @return HTTP送信クライアント実行結果をハンドリングする関数
-	 */
-	/**
+	 * セグメントファイル（.ts）URIの作成
 	 * @param m3u8Uri インデックスファイル（.m3u8）のURI
 	 * @param tsPath セグメントファイル（.ts）のpath
 	 * @return セグメントファイル（.ts）のURI

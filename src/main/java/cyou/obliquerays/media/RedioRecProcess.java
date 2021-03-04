@@ -18,12 +18,11 @@ package cyou.obliquerays.media;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Path;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.NhkDownloader;
 import cyou.obliquerays.media.downloader.model.TsMedia;
 import cyou.obliquerays.media.jave2.NhkEncoder;
@@ -43,18 +43,7 @@ public class RedioRecProcess {
     /** ロガー */
     private static final Logger LOGGER = Logger.getLogger(RedioRecProcess.class.getName());
 
-    /** NHK第2放送のHLS */
-    private static final URI NHKURI = URI.create("https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8");
-
-	/** 録音開始時間の文字列表現 */
-	private static LocalTime START_TIME;
-
-	/** 録音終了時間の文字列表現 */
-	private static LocalTime END_TIME;
-
-	/** 録音する曜日の一覧 */
-	private static Set<DayOfWeek> SET_DAY_OF_WEEK;
-
+    /** スレッド管理 */
 	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
 
 	/**
@@ -62,11 +51,12 @@ public class RedioRecProcess {
 	 * @throws IOException ファイル操作失敗
 	 */
 	private RedioRecProcess() throws IOException {
-		Path lockFile = Path.of(this.getClass().getSimpleName() + ".lock");
+
+		var lockFile = Path.of(this.getClass().getSimpleName() + ".lock");
     	try {
-			LockFileStatus lockFileStatus =
+			var lockFileStatus =
 					new LockFileStatus(Thread.currentThread(), lockFile);
-			this.executor.execute(lockFileStatus);
+			this.executor.scheduleAtFixedRate(lockFileStatus, 5L, 1L, TimeUnit.SECONDS);
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "プロセス実行時存在ファイルの管理に失敗#" + lockFile, e);
 			throw e;
@@ -79,10 +69,10 @@ public class RedioRecProcess {
 	 * @throws InterruptedException ダウンロード中の割り込み
 	 */
 	private List<TsMedia> download() throws InterruptedException {
-		NhkDownloader nhkDownloader = new NhkDownloader(this.executor, NHKURI);
+		var nhkDownloader = new NhkDownloader(this.executor);
 		var future = this.executor.submit(nhkDownloader);
 		while (!future.isDone()) {
-			TimeUnit.SECONDS.sleep(5L);
+			TimeUnit.SECONDS.sleep(1L);
 		}
 		return nhkDownloader.getTsMedias();
 	}
@@ -93,11 +83,8 @@ public class RedioRecProcess {
 	 * @return エンコード後のMP3ファイル
 	 */
 	private Path encode(List<TsMedia> _media) {
-		String target = "./NHK.mp3";
-		var mp3path = Path.of(target);
-		NhkEncoder recorder = new NhkEncoder(mp3path, _media);
+		NhkEncoder recorder = new NhkEncoder(_media);
 		Path result = recorder.record();
-
 		return result;
 	}
 
@@ -107,21 +94,41 @@ public class RedioRecProcess {
 	 */
 	private void execute() throws InterruptedException {
 
-		List<TsMedia> media = this.download();
-		media.stream().forEach(tsMedia -> LOGGER.log(Level.INFO, "downloaded=" + tsMedia));
+		try {
+			do {
+				if (!RadioProperties.getProperties().getDayOfWeeks().contains(DayOfWeek.from(LocalDate.now()))) {
+					LOGGER.log(Level.CONFIG, "待機");
+					TimeUnit.HOURS.sleep(1L);
+					continue;
+				}
 
-		Path mp3 = this.encode(media);
+				LocalTime start = RadioProperties.getProperties().getStart();
+				LocalTime end = RadioProperties.getProperties().getEnd();
+				if (start.minusMinutes(10L).isAfter(LocalTime.now()) || end.minusMinutes(1L).isBefore(LocalTime.now())) {
+					LOGGER.log(Level.CONFIG, "待機");
+					TimeUnit.MINUTES.sleep(1L);
+					continue;
+				}
 
-		this.executor.shutdown();
-		if (this.executor.awaitTermination(10L, TimeUnit.SECONDS))
-			this.executor.shutdownNow();
-		TimeUnit.SECONDS.sleep(5L);
+				List<TsMedia> media = this.download();
+				media.stream().forEach(tsMedia -> LOGGER.log(Level.CONFIG, "downloaded=" + tsMedia));
+				Path mp3 = this.encode(media);
+				LOGGER.log(Level.INFO, "録音ファイル = "+ mp3);
 
-		LOGGER.log(Level.INFO, "mp3="+ mp3);
+			} while (RadioProperties.getProperties().isProcess());
+
+		} catch (Exception e) {
+
+			LOGGER.log(Level.SEVERE, "エラー終了", e);
+
+		} finally {
+
+			this.executor.shutdown();
+			if (!this.executor.awaitTermination(10L, TimeUnit.SECONDS) && !this.executor.isTerminated())
+				this.executor.shutdownNow();
+
+		}
 	}
-
-
-
 
 	/**
 	 * エントリーポイント
@@ -131,16 +138,15 @@ public class RedioRecProcess {
 	public static void main(String[] args) throws Exception {
 		int returnCode = 0;// プログラムのリターンコード
 
-//		START_TIME = LocalTime.parse(args[0]);// 開始時間の文字列表現
-//		END_TIME = LocalTime.parse(args[1]);// 終了時間の文字列表現
-//		String[] arrDayOfWeek = Arrays.copyOfRange(args, 2, args.length-1);// 録音する曜日の一覧文字列表現
-//		SET_DAY_OF_WEEK =
-//				Stream.of(arrDayOfWeek)
-//				.map(DayOfWeek::valueOf)
-//				.collect(Collectors.toSet());// 録音する曜日の一覧
+        try (InputStream propLogging = ClassLoader.getSystemResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(propLogging);
+        } catch (Exception e) {
+        	LOGGER.log(Level.SEVERE, "エラー終了", e);
+        	returnCode = 1;
+        	System.exit(returnCode);
+        }
 
-        try (InputStream resource = ClassLoader.getSystemResourceAsStream("logging.properties")) {
-            LogManager.getLogManager().readConfiguration(resource);
+        try {
     		RedioRecProcess process = new RedioRecProcess();
     		process.execute();
         } catch (Exception e) {

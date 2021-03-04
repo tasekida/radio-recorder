@@ -16,15 +16,22 @@
  */
 package cyou.obliquerays.media.downloader;
 
-import java.net.URI;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.model.TsMedia;
 
 /**
@@ -37,48 +44,61 @@ public class NhkDownloader extends AbstractMediaDownloader<TsMedia> implements R
     /** 内部で使用する{@linkplain java.util.concurrent.ScheduledExecutorService ScheduledExecutorService} */
     private final ScheduledExecutorService executor;
 
-    /** HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI */
-    private final URI m3u8Uri;
-
     /** ダウンロード済みのHLSセグメントファイル一覧 */
     private final List<TsMedia> tsMedias = new ArrayList<>();
 
 	/**
 	 * コンストラクタ
 	 * @param _executor 内部で使用するHTTPクライアントを実行する{@linkplain java.util.concurrent.ScheduledExecutorService ScheduledExecutorService}
-	 * @param _m3u8Uri HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI
 	 */
-	public NhkDownloader(ScheduledExecutorService _executor, URI _m3u8Uri) {
+	public NhkDownloader(ScheduledExecutorService _executor) {
 		super(new ConcurrentLinkedQueue<TsMedia>());
-	    this.executor = _executor;
-		this.m3u8Uri = _m3u8Uri;
+	    this.executor = Objects.requireNonNull(_executor);
 	}
 
 	@Override
 	public void run() {
-
-		var hlsDownloader = new HlsDownloader(this.media(), this.executor, this.m3u8Uri);
+		var hlsDownloader = new HlsDownloader(this.media(), this.executor, RadioProperties.getProperties().getRadio());
 		var tsDownloader = new TsDownloader(this.media(), this.executor);
-		var hlsHandle = this.executor.scheduleAtFixedRate(hlsDownloader, 0L, 20L, TimeUnit.SECONDS);
-		var tsHandle = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 1L, TimeUnit.SECONDS);
-		Runnable hlsCanceller = () -> hlsHandle.cancel(false);
-		Runnable tsCanceller = () -> tsHandle.cancel(false);
-		this.executor.schedule(hlsCanceller, 15L, TimeUnit.MINUTES);
 
 		try {
-			TimeUnit.MINUTES.sleep(15L);
+			LocalTime start = RadioProperties.getProperties().getStart();
+			LocalTime end = RadioProperties.getProperties().getEnd();
+			Duration duration = Duration.between(start, end.plusMinutes(1L));
+
+			while (LocalTime.now().isBefore(start.minusMinutes(1L))) {
+				LOGGER.log(Level.CONFIG, "待機");
+				TimeUnit.MINUTES.sleep(1L);
+			}
+
+			Path saveDir = Path.of(RadioProperties.getProperties().getSaveDir());
+			if (!Files.isDirectory(saveDir) &&  Files.notExists(saveDir)) {
+				Files.createDirectories(saveDir);
+			}
+
+			var hlsHandle = this.executor.scheduleAtFixedRate(hlsDownloader, 0L, 20L, TimeUnit.SECONDS);
+			var tsHandle1 = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 1L, TimeUnit.SECONDS);
+			var tsHandle2 = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 1L, TimeUnit.SECONDS);
+			this.executor.schedule(() -> hlsHandle.cancel(false), duration.toMinutes(), TimeUnit.MINUTES);
+			TimeUnit.MINUTES.sleep(duration.toMinutes());
+
 			while (!hlsHandle.isDone() && !this.media().isEmpty()) {
 				LOGGER.log(Level.CONFIG, "NHK第2放送ダウンロード中");
 				TimeUnit.SECONDS.sleep(1L);
 			}
-			this.executor.execute(tsCanceller);
-		    while (!tsHandle.isDone()) {
+
+			this.executor.execute(() -> tsHandle1.cancel(false));
+			this.executor.execute(() -> tsHandle2.cancel(false));
+		    while (!tsHandle1.isDone() || !tsHandle2.isDone()) {
     			LOGGER.log(Level.CONFIG, "NHK第2放送ダウンロード中");
     			TimeUnit.SECONDS.sleep(1L);
 		    }
 		} catch (InterruptedException e) {
 			LOGGER.log(Level.SEVERE, "NHK第2放送ダウンロード中に割り込みを検知", e);
 			throw new IllegalStateException(e);
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "NHK第2放送ダウンロード中にIOエラーを検知", e);
+			throw new UncheckedIOException(e);
 		}
 
 	    this.tsMedias.clear();

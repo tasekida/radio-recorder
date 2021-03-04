@@ -37,6 +37,7 @@ import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.model.TsMedia;
 
 /**
@@ -79,7 +80,10 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 				return null;
 			} else {
                 if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-                    LOGGER.log(Level.INFO, "HTTP #RESPONSE=" + response.statusCode());
+                    StringBuilder msg = new StringBuilder()
+                    		.append("HTTP #RESPONSE=").append(response.statusCode())
+                    		.append("  #BODY=").append(response.body());
+                    LOGGER.log(Level.INFO, msg.toString());
                     return response.body();
                 } else {
                     StringBuilder msg = new StringBuilder()
@@ -135,7 +139,8 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 		LOGGER.log(Level.CONFIG, "tsUri=" + _tsUri);
 		String[] arrUri = _tsUri.getPath().split("/");
 		String path = new StringBuilder()
-				.append("./").append(arrUri[arrUri.length-2])
+				.append(RadioProperties.getProperties().getSaveDir())
+				.append("/").append(arrUri[arrUri.length-2])
 				.append("-").append(arrUri[arrUri.length-1]).toString();
 		Path tspath = Path.of(path).toAbsolutePath().normalize();
 		LOGGER.log(Level.CONFIG, "tspath=" + tspath);

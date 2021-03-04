@@ -93,10 +93,8 @@ class NhkEncoderTest {
 	 */
 	@Test
 	void testRecord01() throws MalformedURLException, InterruptedException {
-		String source = "https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8";
 		var executor = Executors.newScheduledThreadPool(10);
-		var uri = URI.create(source);
-		var nhkDownloader = new NhkDownloader(executor, uri);
+		var nhkDownloader = new NhkDownloader(executor);
 		var future = executor.submit(nhkDownloader);
 		while (!future.isDone()) {
 			TimeUnit.SECONDS.sleep(5L);
@@ -104,9 +102,7 @@ class NhkEncoderTest {
 		List<TsMedia> media = nhkDownloader.getTsMedias();
 		media.stream().forEach(tsMedia -> LOGGER.log(Level.INFO, "download=" + tsMedia));
 
-		String target = "./NHK.mp3";
-		var mp3path = Path.of(target);
-		NhkEncoder recorder = new NhkEncoder(mp3path, media);
+		NhkEncoder recorder = new NhkEncoder(media);
 		Path result = recorder.record();
 
 		executor.shutdown();
@@ -146,9 +142,7 @@ class NhkEncoderTest {
 
 		media.stream().forEach(tsMedia -> LOGGER.log(Level.INFO, "download=" + tsMedia));
 
-		String target = "./NHK.mp3";
-		var mp3path = Path.of(target);
-		NhkEncoder recorder = new NhkEncoder(mp3path, media);
+		NhkEncoder recorder = new NhkEncoder(media);
 		Path result = recorder.record();
 
 		LOGGER.log(Level.INFO, "result="+ result);

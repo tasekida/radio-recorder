@@ -24,7 +24,6 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,22 +79,17 @@ public class LockFileStatus extends Thread {
 	@Override
 	public void run() {
 		logger.log(Level.CONFIG, "開始");
-		try {
-			while (this.watchKey.isValid()) {
-				this.watchKey.pollEvents().stream()
-				.filter((watchEvent) -> watchEvent.kind() == StandardWatchEventKinds.ENTRY_DELETE)
-				.map((watchEvent) -> ((Path) watchEvent.context()).toAbsolutePath().normalize())
-				.filter((deleteFile) -> deleteFile.equals(this.lockFile))
-				.forEach((deleteFile) -> {
-					logger.log(Level.INFO, "プロセス実行時存在ファイルの削除検知#" + deleteFile);
-					this.watchKey.cancel();
-					this.mainThread.interrupt();
-				});
-				if (this.watchKey.isValid())
-					TimeUnit.SECONDS.sleep(1L);
-			}
-		} catch (InterruptedException e) {
-			logger.log(Level.SEVERE, "待機失敗", e);
+		if (this.watchKey.isValid()) {
+			this.watchKey.pollEvents().stream()
+			.filter((watchEvent) -> watchEvent.kind() == StandardWatchEventKinds.ENTRY_DELETE)
+			.map((watchEvent) -> ((Path) watchEvent.context()).toAbsolutePath().normalize())
+			.filter((deleteFile) -> deleteFile.equals(this.lockFile))
+			.forEach((deleteFile) -> {
+				logger.log(Level.INFO, "プロセス実行時存在ファイルの削除検知#" + deleteFile);
+				this.watchKey.cancel();
+				this.mainThread.interrupt();
+			});
+		} else {
 			this.mainThread.interrupt();
 		}
 		logger.log(Level.CONFIG, "終了");

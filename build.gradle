@@ -78,8 +78,8 @@ tasks.withType(Javadoc) {
     failOnError = false
     options {
         memberLevel = JavadocMemberLevel.PRIVATE
-        encoding = 'UTF-8'
-        links("http://docs.oracle.com/javase/jp/11/docs/api/")
+        encoding = 'UTF-8'        
+        links("https://docs.oracle.com/javase/jp/11/docs/api/")
     }
 }
 

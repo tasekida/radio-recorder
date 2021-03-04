@@ -18,7 +18,6 @@ package cyou.obliquerays.media.downloader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -84,10 +83,8 @@ class NhkDownloaderTest {
 	 */
 	@Test
 	void testRun01() throws Exception {
-		String source = "https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8";
 		var executor = Executors.newScheduledThreadPool(10);
-		var uri = URI.create(source);
-		var nhkDownloader = new NhkDownloader(executor, uri);
+		var nhkDownloader = new NhkDownloader(executor);
 		var future = executor.submit(nhkDownloader);
 		while (!future.isDone()) {
 			TimeUnit.SECONDS.sleep(5L);

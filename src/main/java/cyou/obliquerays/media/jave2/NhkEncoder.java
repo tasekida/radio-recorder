@@ -16,8 +16,11 @@
  */
 package cyou.obliquerays.media.jave2;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.model.TsMedia;
 import ws.schild.jave.Encoder;
 import ws.schild.jave.MultimediaObject;
@@ -47,18 +51,19 @@ public class NhkEncoder {
 
 	/**
 	 * コンストラクタ
-	 * @param _mp3path エンコード後のMP3ファイル
 	 * @param _tsMedias ダウンロード済みのHLSセグメントファイル一覧
 	 */
-	public NhkEncoder(Path _mp3path, List<TsMedia> _tsMedias) {
-		this.mp3path = Objects.requireNonNull(_mp3path).toAbsolutePath().normalize();
+	public NhkEncoder(List<TsMedia> _tsMedias) {
 		Objects.requireNonNull(_tsMedias);
 		if (_tsMedias.isEmpty()) throw new IllegalArgumentException("'tsMedias' must not be empty");
-
 		this.media = _tsMedias.stream()
 				.sorted((m1, m2) -> m1.getTsPath().compareTo(m2.getTsPath()))
 				.map(media -> new MultimediaObject(media.getTsPath().toFile()))
 				.collect(Collectors.toList());
+		this.mp3path = Path.of(
+				RadioProperties.getProperties().getSaveDir()
+				, RadioProperties.getProperties().getFilename())
+				.toAbsolutePath().normalize();
 	}
 
 	/**
@@ -67,11 +72,13 @@ public class NhkEncoder {
 	 * @param _nhkStream ダウンロード済みのHLSストリームURI
 	 * @throws MalformedURLException URL変換エラー
 	 */
-	public NhkEncoder(Path _mp3path, URI _nhkStream) throws MalformedURLException {
-		this.mp3path = Objects.requireNonNull(_mp3path).toAbsolutePath().normalize();
+	public NhkEncoder(URI _nhkStream) throws MalformedURLException {
 		Objects.requireNonNull(_nhkStream);
-
 		this.media = List.of(new MultimediaObject(_nhkStream.toURL()));
+		this.mp3path = Path.of(
+				RadioProperties.getProperties().getSaveDir()
+				, RadioProperties.getProperties().getFilename())
+				.toAbsolutePath().normalize();
 	}
 
 	/**
@@ -89,8 +96,6 @@ public class NhkEncoder {
 
 	 	EncodingAttributes attrs =
 	 			new EncodingAttributes()// エンコードパラメータ
-//	 			.setOffset(30F)// 変換開始までの待機秒数
-//	 			.setDuration(60F)// 変換開始から終了までの秒数
 	 			.setDecodingThreads(2)// デコーダー並列数
 	 			.setEncodingThreads(2)// エンコーダー並列数
 	 			.setAudioAttributes(audio)// 音声パラメータ
@@ -99,6 +104,21 @@ public class NhkEncoder {
 
 	 	LOGGER.log(Level.INFO, attrs.toString());
 	 	return attrs;
+	}
+
+	private void deleteMultimediaObjects() {
+		this.media.stream()
+				.filter(media -> null != media.getFile())
+				.map(media -> media.getFile().toPath().toAbsolutePath().normalize())
+				.forEach((path) -> {
+					try {
+						Files.delete(path);
+						LOGGER.log(Level.INFO, "delete = " + path.toString());
+					} catch (IOException e) {
+						LOGGER.log(Level.SEVERE, "ファイル削除失敗 = " + path.toString());
+						throw new UncheckedIOException(e);
+					}
+				});
 	}
 
 	/**
@@ -110,8 +130,9 @@ public class NhkEncoder {
 		 	Encoder.addOptionAtIndex(new AudioConcatArgument(), Integer.valueOf(0));
 		 	Encoder encoder = new Encoder();
 		 	encoder.encode(this.media, this.mp3path.toFile(), this.getEncodingAttributes(),new LogProgressListener());
-		} catch (Exception ex) {
-		 	ex.printStackTrace();
+		 	this.deleteMultimediaObjects();
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "MP3エンコード中にエラーが発生", e);
 		}
 
 		return this.mp3path;
