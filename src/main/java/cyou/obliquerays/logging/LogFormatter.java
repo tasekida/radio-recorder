@@ -67,7 +67,7 @@ public class LogFormatter extends Formatter {
     public String format(LogRecord record) {
     	String[] packageClass = record.getSourceClassName().split("\\.");
         StringBuilder sb = new StringBuilder();
-        sb.append(LocalDateTime.ofInstant(record.getInstant(), ZoneId.systemDefault()).format(formatter));
+        sb.append(LocalDateTime.ofInstant(record.getInstant(), ZoneId.of("Asia/Tokyo")).format(formatter));
         sb.append(" ");
         sb.append(hostname);
         sb.append(" ");

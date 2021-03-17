@@ -68,7 +68,6 @@ public class NhkEncoder {
 
 	/**
 	 * コンストラクタ
-	 * @param _mp3path エンコード後のMP3ファイル
 	 * @param _nhkStream ダウンロード済みのHLSストリームURI
 	 * @throws MalformedURLException URL変換エラー
 	 */

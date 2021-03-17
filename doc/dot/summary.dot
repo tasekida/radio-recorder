@@ -1,0 +1,6 @@
+digraph "summary" {
+  "radio.recorder"                                   -> "java.base (java.base)";
+  "radio.recorder"                                   -> "java.logging (java.logging)";
+  "radio.recorder"                                   -> "java.net.http (java.net.http)";
+  "radio.recorder"                                   -> "jave.core";
+}

@@ -42,9 +42,9 @@ import cyou.obliquerays.media.downloader.model.TsMedia;
 /**
  * RedioRecProcessのUnitTest
  */
-class RedioRecProcessTest {
+class RadioRecProcessTest {
 
-	private static final Logger LOGGER = Logger.getLogger(RedioRecProcessTest.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RadioRecProcessTest.class.getName());
 
 	/** @throws java.lang.Exception */
 	@BeforeAll
@@ -86,13 +86,13 @@ class RedioRecProcessTest {
 
 	/**
 	 * System.exit(0)のケース
-	 * {@link cyou.obliquerays.media.RedioRecProcess#main(String[])} のためのテスト・メソッド。
+	 * {@link cyou.obliquerays.media.RadioRecProcess#main(String[])} のためのテスト・メソッド。
 	 * @throws Exception
 	 */
 	@Test
 	@ExpectSystemExitWithStatus(0)
 	void testMainSuccess01() throws Exception {
-		RedioRecProcess.main(null);
+		RadioRecProcess.main(null);
 
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 	        public boolean accept(Path file) throws IOException {

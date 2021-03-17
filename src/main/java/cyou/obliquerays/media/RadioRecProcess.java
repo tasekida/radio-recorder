@@ -39,9 +39,9 @@ import cyou.obliquerays.status.LockFileStatus;
 /**
  * NHKラジオ録画処理
  */
-public class RedioRecProcess {
+public class RadioRecProcess {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(RedioRecProcess.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RadioRecProcess.class.getName());
 
     /** スレッド管理 */
 	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
@@ -50,7 +50,7 @@ public class RedioRecProcess {
 	 * デフォルトコンストラクタ
 	 * @throws IOException ファイル操作失敗
 	 */
-	private RedioRecProcess() throws IOException {
+	private RadioRecProcess() throws IOException {
 
 		var lockFile = Path.of(this.getClass().getSimpleName() + ".lock");
     	try {
@@ -147,7 +147,7 @@ public class RedioRecProcess {
         }
 
         try {
-    		RedioRecProcess process = new RedioRecProcess();
+    		RadioRecProcess process = new RadioRecProcess();
     		process.execute();
         } catch (Exception e) {
         	LOGGER.log(Level.SEVERE, "エラー終了", e);

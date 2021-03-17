@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: radio-docker-desktop
+spec:
+  storageClassName: radio-k8slocal
+  capacity:
+    storage: 5Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  local:
+# \\wsl$\docker-desktop\mnt\version-pack\containers\services\docker\rootfs\data\radio
+    path: /data/radio
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - docker-desktop
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: radio-k8slocal
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+---
