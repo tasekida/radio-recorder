@@ -4,19 +4,6 @@ kind: Namespace
 metadata:
   name: radio
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  namespace: radio
-  name: pvc-radio-data
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: radio-k8slocal
-  resources:
-    requests:
-      storage: 5Gi
----
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -33,23 +20,19 @@ spec:
     spec:
       containers:
       - name: radio-recorder
-        image: taseki01/radio-recorder
-        imagePullPolicy: IfNotPresent
-        # volumeDevices:
+        image: radio-recorder
         volumeMounts:
         - name: data
-          # devicePath: /data/radio
           mountPath: /data/radio
-        # volumeMounts:
         - name: radio-config
-          mountPath: /data/config
+          mountPath: /
         env:
         - name: TZ
           value: Asia/Tokyo
       volumes:
         - name: data
-          persistentVolumeClaim:
-            claimName: pvc-radio-data
+          hostPath:
+            path: /data/radio
         - name: radio-config
           configMap:
             name: radio-properties
@@ -76,8 +59,8 @@ data:
     mp3.file: jh_eng.mp3
 
     ### 録音を実行する開始時間、終了時間
-    start.time: 06:00
-    end.time: 06:15
+    start.time: 06:30
+    end.time: 06:45
 
     ### プログラムの起動モード = PROCESSの時、録音を実行する曜日
     sunday: false

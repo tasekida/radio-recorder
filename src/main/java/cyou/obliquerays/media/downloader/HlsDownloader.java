@@ -81,6 +81,7 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
         		.uri(_m3u8Uri)
         		.timeout(Duration.ofSeconds(60L))
         		.header("Content-Type", "application/x-mpegURL")
+				.header("Accept-Language", "ja")
         		.GET()
         		.build();
 	}

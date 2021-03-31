@@ -112,6 +112,7 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 				        		.uri(tsMedia.getTsUri())
 				        		.timeout(Duration.ofSeconds(60L))
 				        		.header("Content-Type", "video/MP2T")
+								.header("Accept-Language", "ja")
 				        		.GET()
 				        		.build();
 				        tsPath = this.client

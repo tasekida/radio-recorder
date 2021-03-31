@@ -30,6 +30,7 @@ dependencies {
 application {
     mainModule = moduleName
     mainClassName = 'cyou.obliquerays.media.RadioRecProcess'
+    applicationDefaultJvmArgs = ['-Duser.language=ja -Duser.country=JP -Duser.timezone=Asia/Tokyo']
 }
 
 java {
@@ -98,7 +99,6 @@ test {
 }
 
 jib {
-	version = buildMajor + '.' + buildMinor + '.' + buildRevision
     extraDirectories {
         paths = 'gradle/release'
     }
@@ -106,8 +106,7 @@ jib {
         image = 'ffmpeg-alpine'
     }
     to {
-        image = 'radio-recorder'
-        image = 'msg-transfer:' + version // YOUR_IMAGE_NAME
+        image = 'radio-recorder' // YOUR_IMAGE_NAME
     }
 }
 
