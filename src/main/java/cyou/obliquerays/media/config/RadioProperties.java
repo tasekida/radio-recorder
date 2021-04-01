@@ -130,7 +130,7 @@ public final class RadioProperties extends Properties {
 	 */
 	private InputStream getInputStream(String _fileName) throws IOException {
 		Objects.requireNonNull(_fileName);
-		Path file = Path.of(_fileName).toAbsolutePath().normalize();
+		Path file = Path.of("/data/config", _fileName).toAbsolutePath().normalize();
 		if (Files.exists(file, LinkOption.NOFOLLOW_LINKS)) {
 			return Files.newInputStream(file, StandardOpenOption.READ);
 		} else {

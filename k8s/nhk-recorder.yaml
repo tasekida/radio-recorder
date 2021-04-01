@@ -21,11 +21,15 @@ spec:
       containers:
       - name: radio-recorder
         image: radio-recorder
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "rm -f /RadioRecProcess.lock; sleep 5"]
         volumeMounts:
         - name: data
           mountPath: /data/radio
         - name: radio-config
-          mountPath: /
+          mountPath: /data/config
         env:
         - name: TZ
           value: Asia/Tokyo

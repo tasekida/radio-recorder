@@ -99,9 +99,6 @@ test {
 }
 
 jib {
-    extraDirectories {
-        paths = 'gradle/release'
-    }
     from {
         image = 'ffmpeg-alpine'
     }
