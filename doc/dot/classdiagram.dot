@@ -1,0 +1,186 @@
+digraph {
+size="10.5,8.0";
+layout=dot;
+rankdir="BT";
+overlap=false;
+splines=true;
+pack=true;
+graph [fontname = "Courier, Regular"]
+node [fontname = "Courier, Regular"]
+edge [fontname = "Courier, Regular"]
+"ws.schild.jave.encode.EncodingArgument"[shape=diamond,style=filled,fillcolor="#b6e7ff",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public abstract interface</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave.encode</b></font></td></tr><tr><td><font point-size='20'><b>EncodingArgument</b></font></td></tr></table>>];
+"java.net.http.HttpResponse$BodyHandler"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpResponse$BodyHandler</b></font></td></tr></table>>];
+"java.util.concurrent.ScheduledFuture"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.concurrent</b></font></td></tr><tr><td><font point-size='20'><b>ScheduledFuture</b></font></td></tr></table>>];
+"java.util.function.BiFunction"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.function</b></font></td></tr><tr><td><font point-size='20'><b>BiFunction</b></font></td></tr></table>>];
+"ws.schild.jave.encode.EncodingAttributes"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave.encode</b></font></td></tr><tr><td><font point-size='20'><b>EncodingAttributes</b></font></td></tr></table>>];
+"ws.schild.jave.info.MultimediaInfo"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave.info</b></font></td></tr><tr><td><font point-size='20'><b>MultimediaInfo</b></font></td></tr></table>>];
+"java.net.http.HttpClient$Version"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpClient$Version</b></font></td></tr></table>>];
+"java.lang.Runnable"[shape=diamond,style=filled,fillcolor="#b6e7ff",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> interface</font></td></tr><tr><td><font point-size='14'><b>java.lang</b></font></td></tr><tr><td><font point-size='20'><b>Runnable</b></font></td></tr></table>>];
+"java.nio.file.WatchEvent$Kind"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.nio.file</b></font></td></tr><tr><td><font point-size='20'><b>WatchEvent$Kind</b></font></td></tr></table>>];
+"java.util.logging.Formatter"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.logging</b></font></td></tr><tr><td><font point-size='20'><b>Formatter</b></font></td></tr></table>>];
+"java.nio.file.WatchKey"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.nio.file</b></font></td></tr><tr><td><font point-size='20'><b>WatchKey</b></font></td></tr></table>>];
+"cyou.obliquerays.media.jave2.LogProgressListener"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.jave2</b></font></td></tr><tr><td><font point-size='20'><b>LogProgressListener</b></font></td></tr></table>>];
+"java.util.concurrent.Flow"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.concurrent</b></font></td></tr><tr><td><font point-size='20'><b>Flow</b></font></td></tr></table>>];
+"cyou.obliquerays.media.RadioRecProcess"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media</b></font></td></tr><tr><td><font point-size='20'><b>RadioRecProcess</b></font></td></tr></table>>];
+"java.lang.Thread"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.lang</b></font></td></tr><tr><td><font point-size='20'><b>Thread</b></font></td></tr></table>>];
+"java.util.Map"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>Map</b></font></td></tr></table>>];
+"java.net.http.HttpResponse$BodyHandlers"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpResponse$BodyHandlers</b></font></td></tr></table>>];
+"java.time.LocalTime"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.time</b></font></td></tr><tr><td><font point-size='20'><b>LocalTime</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.TsDownloader"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader</b></font></td></tr><tr><td><font point-size='20'><b>TsDownloader</b></font></td></tr></table>>];
+"java.net.URI"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net</b></font></td></tr><tr><td><font point-size='20'><b>URI</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.MediaDownloader"[shape=diamond,style=filled,fillcolor="#b6e7ff",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public abstract interface</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader</b></font></td></tr><tr><td><font point-size='20'><b>MediaDownloader</b></font></td></tr></table>>];
+"java.nio.file.Path"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.nio.file</b></font></td></tr><tr><td><font point-size='20'><b>Path</b></font></td></tr></table>>];
+"java.net.http.HttpResponse"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpResponse</b></font></td></tr></table>>];
+"java.util.concurrent.Flow$Subscription"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.concurrent</b></font></td></tr><tr><td><font point-size='20'><b>Flow$Subscription</b></font></td></tr></table>>];
+"cyou.obliquerays.status.LockFileStatus"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.status</b></font></td></tr><tr><td><font point-size='20'><b>LockFileStatus</b></font></td></tr></table>>];
+"java.lang.invoke.MethodHandles$Lookup"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.lang.invoke</b></font></td></tr><tr><td><font point-size='20'><b>MethodHandles$Lookup</b></font></td></tr></table>>];
+"java.lang.invoke.MethodHandles"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.lang.invoke</b></font></td></tr><tr><td><font point-size='20'><b>MethodHandles</b></font></td></tr></table>>];
+"java.util.Set"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>Set</b></font></td></tr></table>>];
+"ws.schild.jave.MultimediaObject"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave</b></font></td></tr><tr><td><font point-size='20'><b>MultimediaObject</b></font></td></tr></table>>];
+"java.util.logging.LogRecord"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.logging</b></font></td></tr><tr><td><font point-size='20'><b>LogRecord</b></font></td></tr></table>>];
+"java.util.logging.Logger"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.logging</b></font></td></tr><tr><td><font point-size='20'><b>Logger</b></font></td></tr></table>>];
+"java.util.List"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>List</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.model.TsMedia"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader.model</b></font></td></tr><tr><td><font point-size='20'><b>TsMedia</b></font></td></tr></table>>];
+"java.util.stream.Stream"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.stream</b></font></td></tr><tr><td><font point-size='20'><b>Stream</b></font></td></tr></table>>];
+"ws.schild.jave.progress.EncoderProgressListener"[shape=diamond,style=filled,fillcolor="#b6e7ff",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public abstract interface</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave.progress</b></font></td></tr><tr><td><font point-size='20'><b>EncoderProgressListener</b></font></td></tr></table>>];
+"ws.schild.jave.encode.ArgType"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave.encode</b></font></td></tr><tr><td><font point-size='20'><b>ArgType</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.NhkDownloader"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader</b></font></td></tr><tr><td><font point-size='20'><b>NhkDownloader</b></font></td></tr></table>>];
+"java.net.http.HttpClient$Redirect"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpClient$Redirect</b></font></td></tr></table>>];
+"java.util.Optional"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>Optional</b></font></td></tr></table>>];
+"java.util.Queue"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>Queue</b></font></td></tr></table>>];
+"java.util.regex.Pattern"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.regex</b></font></td></tr><tr><td><font point-size='20'><b>Pattern</b></font></td></tr></table>>];
+"java.lang.Throwable"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.lang</b></font></td></tr><tr><td><font point-size='20'><b>Throwable</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader.subscriber</b></font></td></tr><tr><td><font point-size='20'><b>HlsParserSubscriber</b></font></td></tr></table>>];
+"cyou.obliquerays.media.jave2.NhkEncoder"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.jave2</b></font></td></tr><tr><td><font point-size='20'><b>NhkEncoder</b></font></td></tr></table>>];
+"cyou.obliquerays.media.config.RadioProperties"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public final class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.config</b></font></td></tr><tr><td><font point-size='20'><b>RadioProperties</b></font></td></tr></table>>];
+"java.util.HashMap"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>HashMap</b></font></td></tr></table>>];
+"cyou.obliquerays.logging.LogFormatter$1"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.logging</b></font></td></tr><tr><td><font point-size='20'><b>LogFormatter$1</b></font></td></tr></table>>];
+"ws.schild.jave.encode.ValueArgument"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>ws.schild.jave.encode</b></font></td></tr><tr><td><font point-size='20'><b>ValueArgument</b></font></td></tr></table>>];
+"java.util.function.Function"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.function</b></font></td></tr><tr><td><font point-size='20'><b>Function</b></font></td></tr></table>>];
+"java.net.http.HttpRequest"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpRequest</b></font></td></tr></table>>];
+"java.util.logging.Level"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.logging</b></font></td></tr><tr><td><font point-size='20'><b>Level</b></font></td></tr></table>>];
+"java.lang.FunctionalInterface"[shape=oval,style=filled,fillcolor="#f3c9ff",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> @interface</font></td></tr><tr><td><font point-size='14'><b>java.lang</b></font></td></tr><tr><td><font point-size='20'><b>FunctionalInterface</b></font></td></tr></table>>];
+"java.util.concurrent.ScheduledExecutorService"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util.concurrent</b></font></td></tr><tr><td><font point-size='20'><b>ScheduledExecutorService</b></font></td></tr></table>>];
+"java.lang.Boolean"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.lang</b></font></td></tr><tr><td><font point-size='20'><b>Boolean</b></font></td></tr></table>>];
+"cyou.obliquerays.media.jave2.AudioConcatArgument"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.jave2</b></font></td></tr><tr><td><font point-size='20'><b>AudioConcatArgument</b></font></td></tr></table>>];
+"java.net.http.HttpClient"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpClient</b></font></td></tr></table>>];
+"java.lang.String"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.lang</b></font></td></tr><tr><td><font point-size='20'><b>String</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.AbstractMediaDownloader"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>abstract class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader</b></font></td></tr><tr><td><font point-size='20'><b>AbstractMediaDownloader</b></font></td></tr></table>>];
+"java.util.Map$Entry"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>Map$Entry</b></font></td></tr></table>>];
+"java.util.Properties"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.util</b></font></td></tr><tr><td><font point-size='20'><b>Properties</b></font></td></tr></table>>];
+"cyou.obliquerays.media.downloader.HlsDownloader"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.media.downloader</b></font></td></tr><tr><td><font point-size='20'><b>HlsDownloader</b></font></td></tr></table>>];
+"java.nio.file.WatchEvent"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.nio.file</b></font></td></tr><tr><td><font point-size='20'><b>WatchEvent</b></font></td></tr></table>>];
+"java.net.http.HttpRequest$Builder"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpRequest$Builder</b></font></td></tr></table>>];
+"java.util.concurrent.Flow$Subscriber"[shape=diamond,style=filled,fillcolor="#b6e7ff",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> interface</font></td></tr><tr><td><font point-size='14'><b>java.util.concurrent</b></font></td></tr><tr><td><font point-size='20'><b>Flow$Subscriber</b></font></td></tr></table>>];
+"cyou.obliquerays.logging.LogFormatter"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'>public class</font></td></tr><tr><td><font point-size='14'><b>cyou.obliquerays.logging</b></font></td></tr><tr><td><font point-size='20'><b>LogFormatter</b></font></td></tr></table>>];
+"java.time.DayOfWeek"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.time</b></font></td></tr><tr><td><font point-size='20'><b>DayOfWeek</b></font></td></tr></table>>];
+"java.time.format.DateTimeFormatter"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.time.format</b></font></td></tr><tr><td><font point-size='20'><b>DateTimeFormatter</b></font></td></tr></table>>];
+"java.net.http.HttpClient$Builder"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.net.http</b></font></td></tr><tr><td><font point-size='20'><b>HttpClient$Builder</b></font></td></tr></table>>];
+"java.io.InputStream"[shape=box,style=filled,fillcolor="#fff2b6",label=<<table border='0' cellborder='0' cellspacing='1'><tr><td><font point-size='12'> class</font></td></tr><tr><td><font point-size='14'><b>java.io</b></font></td></tr><tr><td><font point-size='20'><b>InputStream</b></font></td></tr></table>>];
+
+  "cyou.obliquerays.logging.LogFormatter" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter" -> "java.time.format.DateTimeFormatter" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter" -> "java.util.Map" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter" -> "java.util.logging.Level" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter" -> "java.util.logging.LogRecord" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter$1" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter$1" -> "java.util.HashMap" [arrowsize=2.5]
+  "cyou.obliquerays.logging.LogFormatter$1" -> "java.util.logging.Level" [arrowsize=2.5]
+  "cyou.obliquerays.media.RadioRecProcess" -> "cyou.obliquerays.media.downloader.model.TsMedia" [arrowsize=2.5]
+  "cyou.obliquerays.media.RadioRecProcess" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.media.RadioRecProcess" -> "java.nio.file.Path" [arrowsize=2.5]
+  "cyou.obliquerays.media.RadioRecProcess" -> "java.util.List" [arrowsize=2.5]
+  "cyou.obliquerays.media.RadioRecProcess" -> "java.util.concurrent.ScheduledExecutorService" [arrowsize=2.5]
+  "cyou.obliquerays.media.RadioRecProcess" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.io.InputStream" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.net.URI" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.time.DayOfWeek" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.time.LocalTime" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.util.Set" [arrowsize=2.5]
+  "cyou.obliquerays.media.config.RadioProperties" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.AbstractMediaDownloader" -> "cyou.obliquerays.media.downloader.MediaDownloader" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.AbstractMediaDownloader" -> "java.util.Queue" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "cyou.obliquerays.media.downloader.AbstractMediaDownloader" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "cyou.obliquerays.media.downloader.model.TsMedia" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.lang.Runnable" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.lang.Throwable" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.net.URI" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.net.http.HttpClient" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.net.http.HttpRequest" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.net.http.HttpResponse" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.util.Queue" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.util.Set" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.util.function.BiFunction" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.HlsDownloader" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.MediaDownloader" -> "java.lang.FunctionalInterface" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.MediaDownloader" -> "java.util.Queue" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "cyou.obliquerays.media.downloader.AbstractMediaDownloader" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "cyou.obliquerays.media.downloader.model.TsMedia" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.lang.Boolean" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.lang.Runnable" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.util.List" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.util.Queue" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.util.concurrent.ScheduledExecutorService" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.util.concurrent.ScheduledFuture" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.NhkDownloader" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "cyou.obliquerays.media.downloader.AbstractMediaDownloader" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "cyou.obliquerays.media.downloader.model.TsMedia" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.lang.Runnable" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.lang.Throwable" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.net.URI" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.net.http.HttpClient" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.net.http.HttpResponse" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.nio.file.Path" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.util.Queue" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.util.Set" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.util.function.BiFunction" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.TsDownloader" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.model.TsMedia" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.model.TsMedia" -> "java.net.URI" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.model.TsMedia" -> "java.nio.file.Path" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "cyou.obliquerays.media.downloader.model.TsMedia" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.lang.Throwable" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.net.URI" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.util.Set" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.util.concurrent.Flow$Subscriber" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.util.concurrent.Flow$Subscription" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber" -> "java.util.regex.Pattern" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "java.lang.Boolean" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "java.util.Map$Entry" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "java.util.Optional" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "java.util.function.Function" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "java.util.stream.Stream" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "ws.schild.jave.encode.ArgType" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.AudioConcatArgument" -> "ws.schild.jave.encode.EncodingAttributes" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.LogProgressListener" -> "java.lang.String" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.LogProgressListener" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.LogProgressListener" -> "ws.schild.jave.info.MultimediaInfo" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.NhkEncoder" -> "cyou.obliquerays.media.downloader.model.TsMedia" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.NhkEncoder" -> "java.nio.file.Path" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.NhkEncoder" -> "java.util.List" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.NhkEncoder" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.NhkEncoder" -> "ws.schild.jave.MultimediaObject" [arrowsize=2.5]
+  "cyou.obliquerays.media.jave2.NhkEncoder" -> "ws.schild.jave.encode.EncodingAttributes" [arrowsize=2.5]
+  "cyou.obliquerays.status.LockFileStatus" -> "java.lang.Thread" [arrowsize=2.5]
+  "cyou.obliquerays.status.LockFileStatus" -> "java.nio.file.Path" [arrowsize=2.5]
+  "cyou.obliquerays.status.LockFileStatus" -> "java.nio.file.WatchEvent" [arrowsize=2.5]
+  "cyou.obliquerays.status.LockFileStatus" -> "java.nio.file.WatchKey" [arrowsize=2.5]
+  "cyou.obliquerays.status.LockFileStatus" -> "java.util.logging.Logger" [arrowsize=2.5]
+  "ws.schild.jave.encode.EncodingArgument" -> "java.lang.String" [arrowsize=2.5]
+  "ws.schild.jave.encode.EncodingArgument" -> "java.util.stream.Stream" [arrowsize=2.5]
+  "ws.schild.jave.encode.EncodingArgument" -> "ws.schild.jave.encode.ArgType" [arrowsize=2.5]
+  "ws.schild.jave.encode.EncodingArgument" -> "ws.schild.jave.encode.EncodingAttributes" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "java.lang.Boolean" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "java.lang.String" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "java.util.Optional" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "java.util.function.Function" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "java.util.stream.Stream" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "ws.schild.jave.encode.ArgType" [arrowsize=2.5]
+  "ws.schild.jave.encode.ValueArgument" -> "ws.schild.jave.encode.EncodingAttributes" [arrowsize=2.5]
+  "ws.schild.jave.progress.EncoderProgressListener" -> "java.lang.String" [arrowsize=2.5]
+  "ws.schild.jave.progress.EncoderProgressListener" -> "ws.schild.jave.info.MultimediaInfo" [arrowsize=2.5]
+}
