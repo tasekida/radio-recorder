@@ -94,14 +94,49 @@ class TsDownloaderTest {
 		var hlsDownloader = new HlsDownloader(queue, executor, uri);
 		var tsDownloader = new TsDownloader(queue, executor);
 		executor.execute(hlsDownloader);
-		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 1L, TimeUnit.SECONDS);
+		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 20L, TimeUnit.SECONDS);
 		Runnable tsCanceller = () -> tsHandle.cancel(false);
-		executor.schedule(tsCanceller, 20L, TimeUnit.SECONDS);
+		executor.schedule(tsCanceller, 600L, TimeUnit.SECONDS);
 		TimeUnit.SECONDS.sleep(5L);
 
 	    while (!tsHandle.isDone() && !queue.isEmpty()) {
 	    	TimeUnit.SECONDS.sleep(1L);
 		}
+
+	    executor.shutdown();
+	    if (executor.awaitTermination(10L, TimeUnit.SECONDS))
+	    	executor.shutdownNow();
+	    TimeUnit.SECONDS.sleep(5L);
+
+	    tsDownloader.getTsMedias().stream()
+	    	.peek(media -> LOGGER.log(Level.INFO, "media=" + media))
+	    	.peek(media -> Assertions.assertNotNull(media.getTsUri()))
+	    	.forEach(media -> Assertions.assertNotNull(media.getTsPath()));
+	}
+
+	/**
+	 * {@link cyou.obliquerays.media.downloader.TsDownloader#getMedia()} のためのテスト・メソッド。
+	 * @throws InterruptedException
+	 */
+	@Test
+	void testRun02() throws InterruptedException {
+		var queue = new ConcurrentLinkedQueue<TsMedia>();
+		for (int i = 238; i < 241; i++) {
+			String source = "https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-20210218T163715-01-189/" + i + ".ts";
+			TsMedia tsMedia = new TsMedia(URI.create(source));
+			queue.add(tsMedia);
+		}
+
+		var executor = Executors.newScheduledThreadPool(10);
+		var tsDownloader = new TsDownloader(queue, executor);
+		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 5L, TimeUnit.SECONDS);
+
+	    while (!tsHandle.isDone() && !queue.isEmpty()) {
+	    	TimeUnit.SECONDS.sleep(1L);
+		}
+
+		Runnable tsCanceller = () -> tsHandle.cancel(false);
+		executor.execute(tsCanceller);
 
 	    executor.shutdown();
 	    if (executor.awaitTermination(10L, TimeUnit.SECONDS))

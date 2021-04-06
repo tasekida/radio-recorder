@@ -30,10 +30,10 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import cyou.obliquerays.media.command.TsEncoder;
 import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.NhkDownloader;
 import cyou.obliquerays.media.downloader.model.TsMedia;
-import cyou.obliquerays.media.jave2.NhkEncoder;
 import cyou.obliquerays.status.LockFileStatus;
 
 /**
@@ -83,7 +83,7 @@ public class RadioRecProcess {
 	 * @return エンコード後のMP3ファイル
 	 */
 	private Path encode(List<TsMedia> _media) {
-		NhkEncoder recorder = new NhkEncoder(_media);
+		TsEncoder recorder = new TsEncoder(_media);
 		Path result = recorder.record();
 		return result;
 	}
