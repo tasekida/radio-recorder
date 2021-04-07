@@ -1,5 +1,5 @@
 /**
- *  Copyright 2021 tasekida
+ * Copyright (C) 2021 tasekida
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -66,9 +67,11 @@ class TsEncoderTest {
 
 	/**
 	 * {@link cyou.obliquerays.media.command.TsEncoder#TsEncoder()} のためのテスト・メソッド。
-	 * @throws IOException */
+	 * @throws IOException
+	 * @throws ExecutionException
+	 * @throws InterruptedException */
 	@Test
-	void testRecord01() throws IOException {
+	void testRecord01() throws IOException, InterruptedException, ExecutionException {
 
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 	        public boolean accept(Path file) throws IOException {

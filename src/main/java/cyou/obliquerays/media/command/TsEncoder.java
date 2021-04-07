@@ -1,5 +1,5 @@
 /**
- *  Copyright 2021 tasekida
+ * Copyright (C) 2021 tasekida
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,39 +24,36 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.model.TsMedia;
-import cyou.obliquerays.media.jave2.NhkEncoder;
-import ws.schild.jave.MultimediaObject;
 
 /**
- *
+ * HLS（HTTP Live Streaming）セグメントファイル（.ts）を結合する処理<br>
+ * 音声ファイル（.mp3）を保存
  */
 public class TsEncoder {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(NhkEncoder.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TsEncoder.class.getName());
 
     /** エンコード後のMP3ファイル */
     private final Path mp3path;
 
     /** エンコード対象のメディア */
-    private final List<MultimediaObject> media;
+    private final List<TsMedia> tsMedias;
 
 	/**
 	 * コンストラクタ
 	 * @param _tsMedias ダウンロード済みのHLSセグメントファイル一覧
 	 */
 	public TsEncoder(List<TsMedia> _tsMedias) {
-		Objects.requireNonNull(_tsMedias);
-		if (_tsMedias.isEmpty()) throw new IllegalArgumentException("'tsMedias' must not be empty");
-		this.media = _tsMedias.stream()
-				.sorted((m1, m2) -> m1.getTsPath().compareTo(m2.getTsPath()))
-				.map(media -> new MultimediaObject(media.getTsPath().toFile()))
-				.collect(Collectors.toList());
+		this.tsMedias = Objects.requireNonNull(_tsMedias);
+		if (this.tsMedias.isEmpty()) throw new IllegalArgumentException("'tsMedias' must not be empty");
 		this.mp3path = Path.of(
 				RadioProperties.getProperties().getSaveDir()
 				, RadioProperties.getProperties().getFilename())
@@ -68,23 +65,20 @@ public class TsEncoder {
 	 * @return FFMPEGのパラメータ
 	 */
 	private List<String> getEncodingAttributes() {
-
 		List<String> attrs = new ArrayList<>(0);
-//		attrs.add("cmd");
-//		attrs.add("/C");
 		attrs.add("ffmpeg");
 		attrs.add("-threads");
 		attrs.add("2");
-		this.media.stream()
-			.map(MultimediaObject::getFile)
-			.sorted((s1, s2) -> s1.toPath().compareTo(s2.toPath()))
+		this.tsMedias.stream()
+			.map(TsMedia::getTsPath)
+			.sorted((p1, p2) -> p1.compareTo(p2))
 			.forEach(f -> {
 				attrs.add("-i");
-				attrs.add(f.toString());
+				attrs.add(f.toAbsolutePath().normalize().toString());
 			});
 		attrs.add("-vn");
 		attrs.add("-filter_complex");
-		attrs.add("concat=n=" + this.media.size() + ":v=0:a=1");
+		attrs.add("concat=n=" + this.tsMedias.size() + ":v=0:a=1");
 		attrs.add("-write_xing");
 		attrs.add("0");
 		attrs.add("-ab");
@@ -108,39 +102,37 @@ public class TsEncoder {
 	/**
 	 * NHKラジオをMP3へエンコード
 	 * @return エンコード結果のMP3ファイル
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * @throws ExecutionException
 	 */
-	public Path record() {
+	public Path record() throws IOException, InterruptedException, ExecutionException {
 
-		ProcessBuilder ffmpegBuilder = new ProcessBuilder(this.getEncodingAttributes());
-		ffmpegBuilder.directory(new File(RadioProperties.getProperties().getSaveDir()));
-		ffmpegBuilder.redirectErrorStream(true);
 		Process ffmpeg = null;
 		try {
+			ProcessBuilder ffmpegBuilder = new ProcessBuilder(this.getEncodingAttributes());
+			ffmpegBuilder.directory(new File(RadioProperties.getProperties().getSaveDir()));
+			ffmpegBuilder.redirectErrorStream(true);
 			ffmpeg = ffmpegBuilder.start();
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "FFMPEGの起動に失敗", e);
+			throw e;
 		}
 
-		String line = null;
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(ffmpeg.getInputStream(), StandardCharsets.UTF_8))) {
-		    while ((line = reader.readLine()) != null) {
-				LOGGER.log(Level.INFO, line);
-		    }
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "MP3エンコード中にエラーが発生" + line, e);
-		}
-
-	    try {
-	        ffmpeg.waitFor();
-	    } catch (InterruptedException e) {
+		try (Stream<String> lines = new BufferedReader(new InputStreamReader(ffmpeg.getInputStream(), StandardCharsets.UTF_8)).lines()) {
+			lines.forEach(s -> LOGGER.log(Level.INFO, s));
+			Future<Boolean> result = ffmpeg.onExit().thenApply(p -> p.exitValue() == 0);
+			if (result.get()) {
+				LOGGER.log(Level.INFO, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
+			} else {
+				LOGGER.log(Level.SEVERE, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
+			}
+		} catch (InterruptedException | ExecutionException e) {
 	    	LOGGER.log(Level.SEVERE, "MP3エンコードを中断", e);
+	    	throw e;
+	    } finally {
+	    	ffmpeg.destroyForcibly();
 	    }
-
-		if (ffmpeg.exitValue() == 0) {
-			LOGGER.log(Level.INFO, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
-		} else {
-			LOGGER.log(Level.SEVERE, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
-		}
 
 		return this.mp3path;
 	}
