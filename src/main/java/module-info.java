@@ -9,7 +9,6 @@ module radio.recorder {
 
 	requires transitive java.logging;
 	requires java.net.http;
-	requires jave.core;
 	requires jdk.httpserver;
 	requires java.xml;
 }

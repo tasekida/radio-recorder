@@ -35,3 +35,6 @@ gradle/release/
 # Ignore IDE Settings output directory
 .settings/
 .idea/
+.project
+.classpath
+

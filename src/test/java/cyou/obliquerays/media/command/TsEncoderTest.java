@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package cyou.obliquerays.media;
+package cyou.obliquerays.media.command;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,28 +22,25 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
-
 import cyou.obliquerays.media.downloader.model.TsMedia;
 
-/**
- * RedioRecProcessのUnitTest
- */
-class RadioRecProcessTest {
-
-	private static final Logger LOGGER = Logger.getLogger(RadioRecProcessTest.class.getName());
+/** TsEncoderのUnitTest */
+class TsEncoderTest {
+	/** ロガー */
+	private static final Logger LOGGER = Logger.getLogger(TsEncoderTest.class.getName());
 
 	/** @throws java.lang.Exception */
 	@BeforeAll
@@ -53,6 +50,7 @@ class RadioRecProcessTest {
         } catch (Throwable t) {
         	LOGGER.log(Level.SEVERE, "エラー終了", t);
         }
+		Arrays.stream(System.getenv("Path").split(";")).forEach(str -> LOGGER.log(Level.CONFIG, str));
 	}
 
 	/** @throws java.lang.Exception */
@@ -61,37 +59,19 @@ class RadioRecProcessTest {
 
 	/** @throws java.lang.Exception */
 	@BeforeEach
-	void setUp() throws Exception {}
+	void setUp() throws Exception {	}
 
 	/** @throws java.lang.Exception */
 	@AfterEach
-	void tearDown() throws Exception {
-		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-	         public boolean accept(Path file) throws IOException {
-	        	 String fileName = file.getFileName().toString();
-	             return fileName.matches("^.+\\.ts$") || fileName.matches("^.+\\.mp3$");
-	         }
-	    };
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of("."), filter)) {
-			stream.forEach(t -> {
-				try {
-					Files.delete(t);
-				} catch (IOException e) {
-					new IllegalStateException(e);
-				}
-			});
-		}
-	}
+	void tearDown() throws Exception {}
 
 	/**
-	 * System.exit(0)のケース
-	 * {@link cyou.obliquerays.media.RadioRecProcess#main(String[])} のためのテスト・メソッド。
-	 * @throws Exception
-	 */
+	 * {@link cyou.obliquerays.media.command.TsEncoder#TsEncoder()} のためのテスト・メソッド。
+	 * @throws IOException
+	 * @throws ExecutionException
+	 * @throws InterruptedException */
 	@Test
-	@ExpectSystemExitWithStatus(0)
-	void testMainSuccess01() throws Exception {
-		RadioRecProcess.main(null);
+	void testRecord01() throws IOException, InterruptedException, ExecutionException {
 
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 	        public boolean accept(Path file) throws IOException {
@@ -99,17 +79,20 @@ class RadioRecProcessTest {
 	        }
 	    };
 	    List<TsMedia> media = new ArrayList<>();
-	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("."), filter)) {
+	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("20210404"), filter)) {
 	    	dirStream.forEach(path -> {
 	    		TsMedia ts = new TsMedia(URI.create("https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8"));
-	    		ts.setTsPath(path);
+	    		ts.setTsPath(path.toAbsolutePath().normalize());
 	    		media.add(ts);
 	    	});
 	    }
 
-		media.stream()
-	    	.peek(ts -> LOGGER.log(Level.INFO, "media=" + ts))
-	    	.forEach(ts -> Assertions.assertNotNull(ts.getTsPath()));
-		Assertions.assertTrue(Files.exists(Path.of("./NHK.mp3")));
+		media.stream().forEach(tsMedia -> LOGGER.log(Level.INFO, "download=" + tsMedia));
+
+		TsEncoder recorder = new TsEncoder(media);
+		Path result = recorder.record();
+
+		LOGGER.log(Level.INFO, "result="+ result);
 	}
+
 }
