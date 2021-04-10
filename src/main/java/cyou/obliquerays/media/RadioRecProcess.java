@@ -81,9 +81,9 @@ public class RadioRecProcess {
 	 * セグメントファイルをMP3ファイルへエンコード
 	 * @param _media ダウンロード済みのHLSセグメントファイル
 	 * @return エンコード後のMP3ファイル
-	 * @throws ExecutionException
-	 * @throws InterruptedException
-	 * @throws IOException
+	 * @throws ExecutionException FFMPEG実行失敗
+	 * @throws InterruptedException FFMPEG実行中にスレッド割り込み
+	 * @throws IOException FFMPEG起動失敗
 	 */
 	private Path encode(List<TsMedia> _media) throws IOException, InterruptedException, ExecutionException {
 		TsEncoder recorder = new TsEncoder(_media);

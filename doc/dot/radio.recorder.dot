@@ -1,5 +1,5 @@
 digraph "radio.recorder" {
-    // Path: D:\develop\workspace\radio-recorder\gradle\release\radio-recorder-0.0.0.jar
+    // Path: D:\develop\workspace\radio-recorder\gradle\release\radio-recorder-0.0.7.jar
    "cyou.obliquerays.logging"                         -> "java.io (java.base)";
    "cyou.obliquerays.logging"                         -> "java.lang (java.base)";
    "cyou.obliquerays.logging"                         -> "java.lang.invoke (java.base)";
@@ -8,10 +8,10 @@ digraph "radio.recorder" {
    "cyou.obliquerays.logging"                         -> "java.time.format (java.base)";
    "cyou.obliquerays.logging"                         -> "java.util (java.base)";
    "cyou.obliquerays.logging"                         -> "java.util.logging (java.logging)";
+   "cyou.obliquerays.media"                           -> "cyou.obliquerays.media.command (radio.recorder)";
    "cyou.obliquerays.media"                           -> "cyou.obliquerays.media.config (radio.recorder)";
    "cyou.obliquerays.media"                           -> "cyou.obliquerays.media.downloader (radio.recorder)";
    "cyou.obliquerays.media"                           -> "cyou.obliquerays.media.downloader.model (radio.recorder)";
-   "cyou.obliquerays.media"                           -> "cyou.obliquerays.media.jave2 (radio.recorder)";
    "cyou.obliquerays.media"                           -> "cyou.obliquerays.status (radio.recorder)";
    "cyou.obliquerays.media"                           -> "java.io (java.base)";
    "cyou.obliquerays.media"                           -> "java.lang (java.base)";
@@ -24,6 +24,18 @@ digraph "radio.recorder" {
    "cyou.obliquerays.media"                           -> "java.util.function (java.base)";
    "cyou.obliquerays.media"                           -> "java.util.logging (java.logging)";
    "cyou.obliquerays.media"                           -> "java.util.stream (java.base)";
+   "cyou.obliquerays.media.command"                   -> "cyou.obliquerays.media.config (radio.recorder)";
+   "cyou.obliquerays.media.command"                   -> "cyou.obliquerays.media.downloader.model (radio.recorder)";
+   "cyou.obliquerays.media.command"                   -> "java.io (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.lang (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.lang.invoke (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.nio.charset (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.nio.file (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.util (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.util.concurrent (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.util.function (java.base)";
+   "cyou.obliquerays.media.command"                   -> "java.util.logging (java.logging)";
+   "cyou.obliquerays.media.command"                   -> "java.util.stream (java.base)";
    "cyou.obliquerays.media.config"                    -> "java.io (java.base)";
    "cyou.obliquerays.media.config"                    -> "java.lang (java.base)";
    "cyou.obliquerays.media.config"                    -> "java.net (java.base)";
@@ -62,21 +74,6 @@ digraph "radio.recorder" {
    "cyou.obliquerays.media.downloader.subscriber"     -> "java.util.logging (java.logging)";
    "cyou.obliquerays.media.downloader.subscriber"     -> "java.util.regex (java.base)";
    "cyou.obliquerays.media.downloader.subscriber"     -> "java.util.stream (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "cyou.obliquerays.media.config (radio.recorder)";
-   "cyou.obliquerays.media.jave2"                     -> "cyou.obliquerays.media.downloader.model (radio.recorder)";
-   "cyou.obliquerays.media.jave2"                     -> "java.io (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.lang (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.lang.invoke (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.net (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.nio.file (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.util (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.util.function (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "java.util.logging (java.logging)";
-   "cyou.obliquerays.media.jave2"                     -> "java.util.stream (java.base)";
-   "cyou.obliquerays.media.jave2"                     -> "ws.schild.jave (jave.core)";
-   "cyou.obliquerays.media.jave2"                     -> "ws.schild.jave.encode (jave.core)";
-   "cyou.obliquerays.media.jave2"                     -> "ws.schild.jave.info (jave.core)";
-   "cyou.obliquerays.media.jave2"                     -> "ws.schild.jave.progress (jave.core)";
    "cyou.obliquerays.status"                          -> "java.io (java.base)";
    "cyou.obliquerays.status"                          -> "java.lang (java.base)";
    "cyou.obliquerays.status"                          -> "java.lang.invoke (java.base)";

@@ -1,0 +1,20 @@
+apiVersion: skaffold/v2beta13
+kind: Config
+metadata:
+  name: radio-recorder
+build:
+  artifacts:
+  - image: radio-recorder
+    context: ./
+    docker:
+      dockerfile: manifests/docker/Dockerfile
+  tagPolicy:
+    sha256: {}
+  local:
+    push: true
+deploy:
+  kubectl:
+    manifests:
+    - manifests/k8s/nhk-english0.yaml
+    - manifests/k8s/nhk-english2.yaml
+    - manifests/k8s/nhk-english3.yaml
