@@ -31,6 +31,7 @@ bin/
 # Ignore Gradle build output directory
 build/
 gradle/release/
+gradle/jlink/
 
 # Ignore IDE Settings output directory
 .settings/

@@ -71,7 +71,25 @@ public class TsEncoder {
 		attrs.add("2");
 		this.tsMedias.stream()
 			.map(TsMedia::getTsPath)
-			.sorted((p1, p2) -> p1.compareTo(p2))
+			.sorted((p1, p2) -> {
+				String[] arr1 = p1.getFileName().toString().split("-");
+				String[] arr2 = p2.getFileName().toString().split("-");
+				int index = arr1.length < arr2.length ? arr1.length : arr2.length;
+				for (int ret = 0, i = 0; i < index; i++) {
+					if (arr1[i].length() == arr2[i].length()) {
+						ret = arr1[i].compareTo(arr2[i]);
+					} else {
+						int padding = arr1[i].length() < arr2[i].length() ? arr2[i].length() : arr1[i].length();
+						String str1 = arr1[i].length() < padding ?  String.format("%" + padding + "s", arr1[i]).replace(" ", "0") : arr1[i];
+						String str2 = arr2[i].length() < padding ?  String.format("%" + padding + "s", arr2[i]).replace(" ", "0") : arr2[i];
+						ret = str1.compareTo(str2);
+					}
+					if (ret != 0) {
+						return ret;
+					}
+				}
+				return 0;
+			})
 			.forEach(f -> {
 				attrs.add("-i");
 				attrs.add(f.toAbsolutePath().normalize().toString());
@@ -102,9 +120,9 @@ public class TsEncoder {
 	/**
 	 * NHKラジオをMP3へエンコード
 	 * @return エンコード結果のMP3ファイル
-	 * @throws IOException
-	 * @throws InterruptedException
-	 * @throws ExecutionException
+	 * @throws IOException FFMPEG起動失敗
+	 * @throws InterruptedException FFMPEG実行中にスレッド割り込み
+	 * @throws ExecutionException FFMPEG実行失敗
 	 */
 	public Path record() throws IOException, InterruptedException, ExecutionException {
 

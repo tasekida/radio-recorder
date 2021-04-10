@@ -69,7 +69,8 @@ class TsEncoderTest {
 	 * {@link cyou.obliquerays.media.command.TsEncoder#TsEncoder()} のためのテスト・メソッド。
 	 * @throws IOException
 	 * @throws ExecutionException
-	 * @throws InterruptedException */
+	 * @throws InterruptedException
+	 */
 	@Test
 	void testRecord01() throws IOException, InterruptedException, ExecutionException {
 
@@ -79,7 +80,7 @@ class TsEncoderTest {
 	        }
 	    };
 	    List<TsMedia> media = new ArrayList<>();
-	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("20210404"), filter)) {
+	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("20210405"), filter)) {
 	    	dirStream.forEach(path -> {
 	    		TsMedia ts = new TsMedia(URI.create("https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8"));
 	    		ts.setTsPath(path.toAbsolutePath().normalize());

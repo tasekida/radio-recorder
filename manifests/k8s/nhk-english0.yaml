@@ -8,18 +8,18 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   namespace: radio
-  name: radio-recorder
+  name: nhk-english0
 spec:
   selector:
     matchLabels:
-      app: radio-recorder
+      app: nhk-english0
   template:
     metadata:
       labels:
-        app: radio-recorder
+        app: nhk-english0
     spec:
       containers:
-      - name: radio-recorder
+      - name: nhk-english0
         image: radio-recorder
         lifecycle:
           preStop:
@@ -36,16 +36,16 @@ spec:
       volumes:
         - name: data
           hostPath:
-            path: /data/radio
+            path: /data/radio/english0
         - name: radio-config
           configMap:
-            name: radio-properties
+            name: radio-properties0
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: radio
-  name: radio-properties
+  name: radio-properties0
 data:
   radio.properties: |
     ### プログラムの起動モード
@@ -60,17 +60,17 @@ data:
     base.dir: /data/radio
 
     ### 録音ファイル名
-    mp3.file: jh_eng.mp3
+    mp3.file: english0.mp3
 
     ### 録音を実行する開始時間、終了時間
-    start.time: 06:30
-    end.time: 06:45
+    start.time: 18:35
+    end.time: 18:45
 
     ### プログラムの起動モード = PROCESSの時、録音を実行する曜日
     sunday: false
     monday: true
-    tuesday: true
+    tuesday: false
     wednesday: true
-    thursday: true
+    thursday: false
     friday: true
     saturday: false
