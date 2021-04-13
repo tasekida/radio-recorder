@@ -63,11 +63,11 @@ public class NhkDownloader extends AbstractMediaDownloader<TsMedia> implements R
 		try {
 			LocalTime start = RadioProperties.getProperties().getStart();
 			LocalTime end = RadioProperties.getProperties().getEnd();
-			Duration duration = Duration.between(start, end.plusMinutes(1L));
+			Duration duration = Duration.between(start, end).minusSeconds(90L);
 
-			while (LocalTime.now().isBefore(start.minusMinutes(1L))) {
+			while (LocalTime.now().isBefore(start.plusSeconds(170L))) {
 				LOGGER.log(Level.CONFIG, "待機");
-				TimeUnit.MINUTES.sleep(1L);
+				TimeUnit.SECONDS.sleep(10L);
 			}
 
 			Path saveDir = Path.of(RadioProperties.getProperties().getSaveDir());

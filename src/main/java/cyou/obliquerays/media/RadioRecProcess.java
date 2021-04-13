@@ -107,7 +107,7 @@ public class RadioRecProcess {
 
 				LocalTime start = RadioProperties.getProperties().getStart();
 				LocalTime end = RadioProperties.getProperties().getEnd();
-				if (start.minusMinutes(10L).isAfter(LocalTime.now()) || end.minusMinutes(1L).isBefore(LocalTime.now())) {
+				if (start.minusMinutes(2L).isAfter(LocalTime.now()) || end.minusMinutes(1L).isBefore(LocalTime.now())) {
 					LOGGER.log(Level.CONFIG, "待機");
 					TimeUnit.MINUTES.sleep(1L);
 					continue;
