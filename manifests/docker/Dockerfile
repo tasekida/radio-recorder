@@ -8,6 +8,8 @@ RUN /usr/lib/jvm/default-jvm/bin/jlink --compress=2 --module-path /work/ --add-m
 
 RUN sed -i -e '/^JLINK_VM_OPTIONS/s/$/"-Duser.language=ja -Duser.country=JP -Duser.timezone=Asia\/Tokyo"/' /app/bin/command
 
+RUN sed -i -e '/^jdk.http.auth.tunneling.disabledSchemes/s/Basic//' /app/conf/net.properties
+
 FROM alpine:latest
 
 RUN apk --no-cache add ffmpeg && rm -rf /var/cache/apk/*

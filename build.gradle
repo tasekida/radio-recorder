@@ -26,7 +26,6 @@ dependencies {
 application {
     mainModule = moduleName
     mainClassName = 'cyou.obliquerays.media.RadioRecProcess'
-    applicationDefaultJvmArgs = ['-Duser.language=ja -Duser.country=JP -Duser.timezone=Asia/Tokyo']
 }
 
 java {

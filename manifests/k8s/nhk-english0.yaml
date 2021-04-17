@@ -53,6 +53,13 @@ data:
     ### false=開始時間から終了時間まで一度実行して終了）
     process: true
 
+    ### PROXY設定
+    proxy.enable: false
+    proxy.host: proxyHostname
+    proxy.port: 8080
+    proxy.account: proxyAccount
+    proxy.password: proxyPassword
+
     ### NHK第2放送のURI
     radio.uri: https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8
 

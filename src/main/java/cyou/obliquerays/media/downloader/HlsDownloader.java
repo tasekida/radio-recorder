@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.model.TsMedia;
 import cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber;
 
@@ -73,14 +74,14 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 		this.client = HttpClient.newBuilder()
         		.version(Version.HTTP_2)
         		.followRedirects(Redirect.NORMAL)
-        		.proxy(HttpClient.Builder.NO_PROXY)
+        		.proxy(RadioProperties.getProperties().getProxySelector())
+        		.authenticator(RadioProperties.getProperties().getProxyAuthenticator())
         		.executor(_executor)
         		.build();
         this.request = HttpRequest.newBuilder()
         		.uri(_m3u8Uri)
         		.timeout(Duration.ofSeconds(60L))
         		.header("Content-Type", "application/x-mpegURL")
-				.header("Accept-Language", "ja")
         		.GET()
         		.build();
 	}
