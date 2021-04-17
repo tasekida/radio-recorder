@@ -18,7 +18,11 @@ package cyou.obliquerays.media.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -29,10 +33,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import cyou.obliquerays.media.downloader.authenticator.ProxyAuthenticator;
 
 /**
  * パラメータ一覧
@@ -48,6 +55,8 @@ public final class RadioProperties extends Properties {
 	private static RadioProperties PROP;
 
 	private final boolean process;
+	private final ProxySelector proxySelector;
+	private final Authenticator proxyAuthenticator;
 	private final URI radio;
 	private final String filename;
 	private final LocalTime start;
@@ -64,8 +73,26 @@ public final class RadioProperties extends Properties {
 			LOGGER.log(Level.SEVERE, "設定ファイルの読み取りに失敗#" + PROPERTY_FILENAME, e);
 			throw new UncheckedIOException(e);
     	}
+
     	this.process = Boolean.parseBoolean(this.getProperty("process"));
+    	if (Boolean.parseBoolean(this.getProperty("proxy.enable"))) {
+    		String proxyHost = Objects.requireNonNull(this.getProperty("proxy.host"));
+    		int proxyPort = Integer.parseInt(Objects.requireNonNull(this.getProperty("proxy.port")));
+    		InetSocketAddress inetSocketProxy = new InetSocketAddress(proxyHost, proxyPort);
+    		this.proxySelector = inetSocketProxy.isUnresolved() ? HttpClient.Builder.NO_PROXY : ProxySelector.of(inetSocketProxy);
+
+    		Optional<String> proxyAccount = Optional.ofNullable(this.getProperty("proxy.account"));
+    		Optional<String> proxyPassword = Optional.ofNullable(this.getProperty("proxy.password"));
+    		this.proxyAuthenticator = (proxyAccount.isPresent() && proxyPassword.isPresent())
+    				? new ProxyAuthenticator(proxyAccount.get(), proxyPassword.get())
+    				: Authenticator.getDefault();
+    	} else {
+    		this.proxySelector = HttpClient.Builder.NO_PROXY;
+    		this.proxyAuthenticator = Authenticator.getDefault();
+    	}
+
     	this.radio = URI.create(Objects.requireNonNull(this.getProperty("radio.uri")));
+
     	this.filename = Objects.requireNonNull(this.getProperty("mp3.file"));
     	this.start = LocalTime.parse(Objects.requireNonNull(this.getProperty("start.time")));
     	this.end = LocalTime.parse(Objects.requireNonNull(this.getProperty("end.time")));
@@ -88,6 +115,16 @@ public final class RadioProperties extends Properties {
 	/** @return プログラム起動モード */
 	public boolean isProcess() {
 		return this.process;
+	}
+
+	/** @return Proxy接続情報の管理 */
+	public ProxySelector getProxySelector() {
+		return this.proxySelector;
+	}
+
+	/** @return Proxy認証情報の管理 */
+	public Authenticator getProxyAuthenticator() {
+		return this.proxyAuthenticator;
 	}
 
 	/** @return RADIOストリーミングのURI */

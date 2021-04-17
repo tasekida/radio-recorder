@@ -48,6 +48,7 @@ class HlsDownloaderTest {
         try (InputStream resource = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(resource);
         }
+        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
 	}
 
 	/** @throws java.lang.Exception */

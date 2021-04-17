@@ -63,7 +63,8 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
         this.client = HttpClient.newBuilder()
         		.version(Version.HTTP_2)
         		.followRedirects(Redirect.NORMAL)
-        		.proxy(HttpClient.Builder.NO_PROXY)
+        		.proxy(RadioProperties.getProperties().getProxySelector())
+        		.authenticator(RadioProperties.getProperties().getProxyAuthenticator())
         		.executor(_executor)
         		.build();
 	}
@@ -111,7 +112,6 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 				        		.uri(tsMedia.getTsUri())
 				        		.timeout(Duration.ofSeconds(60L))
 				        		.header("Content-Type", "video/MP2T")
-								.header("Accept-Language", "ja")
 				        		.GET()
 				        		.build();
 				        tsPath = this.client
