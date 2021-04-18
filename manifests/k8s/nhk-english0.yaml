@@ -54,7 +54,7 @@ data:
     process: true
 
     ### PROXY設定
-    proxy.enable: false
+    proxy: false
     proxy.host: proxyHostname
     proxy.port: 8080
     proxy.account: proxyAccount
