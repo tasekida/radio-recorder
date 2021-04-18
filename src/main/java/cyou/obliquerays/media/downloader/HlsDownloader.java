@@ -71,14 +71,17 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 	public HlsDownloader(Queue<TsMedia> _queue, Executor _executor, URI _m3u8Uri) {
 		super(_queue);
         this.m3u8Uri = _m3u8Uri;
-		this.client = HttpClient.newBuilder()
+		HttpClient.Builder builder = HttpClient.newBuilder()
         		.version(Version.HTTP_2)
         		.followRedirects(Redirect.NORMAL)
-        		.proxy(RadioProperties.getProperties().getProxySelector())
-        		.authenticator(RadioProperties.getProperties().getProxyAuthenticator())
-        		.executor(_executor)
-        		.build();
-        this.request = HttpRequest.newBuilder()
+        		.executor(_executor);
+		if (RadioProperties.getProperties().isProxy()) {
+			builder = builder.proxy(RadioProperties.getProperties().getProxySelector());
+			if (RadioProperties.getProperties().isProxyAuth())
+				builder = builder.authenticator(RadioProperties.getProperties().getProxyAuthenticator());
+		}
+	    this.client = builder.build();
+		this.request = HttpRequest.newBuilder()
         		.uri(_m3u8Uri)
         		.timeout(Duration.ofSeconds(60L))
         		.header("Content-Type", "application/x-mpegURL")

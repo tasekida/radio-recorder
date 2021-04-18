@@ -60,13 +60,16 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 	 */
 	public TsDownloader(Queue<TsMedia> _queue, Executor _executor) {
 		super(_queue);
-        this.client = HttpClient.newBuilder()
+		HttpClient.Builder builder = HttpClient.newBuilder()
         		.version(Version.HTTP_2)
         		.followRedirects(Redirect.NORMAL)
-        		.proxy(RadioProperties.getProperties().getProxySelector())
-        		.authenticator(RadioProperties.getProperties().getProxyAuthenticator())
-        		.executor(_executor)
-        		.build();
+        		.executor(_executor);
+		if (RadioProperties.getProperties().isProxy()) {
+			builder = builder.proxy(RadioProperties.getProperties().getProxySelector());
+			if (RadioProperties.getProperties().isProxyAuth())
+				builder = builder.authenticator(RadioProperties.getProperties().getProxyAuthenticator());
+		}
+	    this.client = builder.build();
 	}
 
 	/**

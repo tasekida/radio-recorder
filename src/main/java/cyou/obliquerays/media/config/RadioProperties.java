@@ -55,6 +55,8 @@ public final class RadioProperties extends Properties {
 	private static RadioProperties PROP;
 
 	private final boolean process;
+	private final boolean proxy;
+	private final boolean proxyAuth;
 	private final ProxySelector proxySelector;
 	private final Authenticator proxyAuthenticator;
 	private final URI radio;
@@ -75,7 +77,8 @@ public final class RadioProperties extends Properties {
     	}
 
     	this.process = Boolean.parseBoolean(this.getProperty("process"));
-    	if (Boolean.parseBoolean(this.getProperty("proxy.enable"))) {
+    	this.proxy = Boolean.parseBoolean(this.getProperty("proxy"));
+    	if (this.proxy) {
     		String proxyHost = Objects.requireNonNull(this.getProperty("proxy.host"));
     		int proxyPort = Integer.parseInt(Objects.requireNonNull(this.getProperty("proxy.port")));
     		InetSocketAddress inetSocketProxy = new InetSocketAddress(proxyHost, proxyPort);
@@ -83,12 +86,17 @@ public final class RadioProperties extends Properties {
 
     		Optional<String> proxyAccount = Optional.ofNullable(this.getProperty("proxy.account"));
     		Optional<String> proxyPassword = Optional.ofNullable(this.getProperty("proxy.password"));
-    		this.proxyAuthenticator = (proxyAccount.isPresent() && proxyPassword.isPresent())
-    				? new ProxyAuthenticator(proxyAccount.get(), proxyPassword.get())
-    				: Authenticator.getDefault();
+    		if ((proxyAccount.isPresent() && proxyPassword.isPresent())) {
+    			this.proxyAuth = true;
+    			this.proxyAuthenticator = new ProxyAuthenticator(proxyAccount.get(), proxyPassword.get());
+    		} else {
+    			this.proxyAuth = false;
+    			this.proxyAuthenticator = ProxyAuthenticator.getDefault();
+    		}
     	} else {
+    		this.proxyAuth = false;
     		this.proxySelector = HttpClient.Builder.NO_PROXY;
-    		this.proxyAuthenticator = Authenticator.getDefault();
+    		this.proxyAuthenticator = ProxyAuthenticator.getDefault();
     	}
 
     	this.radio = URI.create(Objects.requireNonNull(this.getProperty("radio.uri")));
@@ -117,9 +125,19 @@ public final class RadioProperties extends Properties {
 		return this.process;
 	}
 
+	/** @return Proxy設定 */
+	public boolean isProxy() {
+		return this.proxy;
+	}
+
 	/** @return Proxy接続情報の管理 */
 	public ProxySelector getProxySelector() {
 		return this.proxySelector;
+	}
+
+	/** @return Proxy認証設定 */
+	public boolean isProxyAuth() {
+		return this.proxyAuth;
 	}
 
 	/** @return Proxy認証情報の管理 */
