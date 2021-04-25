@@ -1,4 +1,4 @@
-FROM alpine:latest AS build
+FROM alpine:latest AS build-openjdk11
 
 RUN apk --no-cache add openjdk11
 
@@ -14,6 +14,6 @@ FROM alpine:latest
 
 RUN apk --no-cache add ffmpeg && rm -rf /var/cache/apk/*
 
-COPY --from=build /app /app
+COPY --from=build-openjdk11 /app /app
 
 CMD ["sh", "-c", "/app/bin/command"]
