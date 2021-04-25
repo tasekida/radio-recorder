@@ -7,7 +7,7 @@ build:
   - image: radio-recorder
     context: ./
     docker:
-      dockerfile: manifests/docker/Dockerfile
+      dockerfile: manifests/docker/Dockerfile.graalvm11
   tagPolicy:
     sha256: {}
   local:

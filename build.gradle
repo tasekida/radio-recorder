@@ -5,7 +5,7 @@ plugins {
     id 'life.expert.archidoc' version '1.0.11'
 }
 
-wrapper.gradleVersion = '6.8.3'
+wrapper.gradleVersion = '7.0'
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 modularity.improveEclipseClasspathFile()

@@ -30,6 +30,7 @@ bin/
 
 # Ignore Gradle build output directory
 build/
+gradle/graalvm/
 gradle/release/
 gradle/nhk_english_0/
 gradle/nhk_english_2/
