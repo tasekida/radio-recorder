@@ -1,0 +1,25 @@
+FROM ghcr.io/graalvm/graalvm-ce:latest AS build
+
+ENV TZ Asia/Tokyo
+ENV LANG ja_JP.UTF-8
+ENV LC_ALL ja_JP.UTF-8
+
+RUN microdnf install glibc-langpack-ja \
+ && gu install native-image
+
+COPY ./gradle/release/* /work/
+
+RUN native-image -cp /work/* cyou.obliquerays.media.RadioRecProcess /app/native-run
+
+FROM alpine:latest
+
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+ && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.33-r0/glibc-2.33-r0.apk \
+ && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.33-r0/glibc-bin-2.33-r0.apk \
+ && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.33-r0/glibc-i18n-2.33-r0.apk \
+ && apk --no-cache --update add glibc-2.33-r0.apk glibc-bin-2.33-r0.apk glibc-i18n-2.33-r0.apk ffmpeg \
+ && rm glibc-2.33-r0.apk glibc-bin-2.33-r0.apk glibc-i18n-2.33-r0.apk
+
+COPY --from=build /app /app
+
+CMD ["sh", "-c", "/app/native-run"]
