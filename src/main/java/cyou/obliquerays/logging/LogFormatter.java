@@ -22,12 +22,11 @@ import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.regex.Pattern;
 
 /**
  * カスタムログフォーマッター<br>
@@ -36,41 +35,43 @@ import java.util.logging.LogRecord;
 public class LogFormatter extends Formatter {
 
 	/** ログのタイムスタンプフォーマット */
-	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnn");
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
     /** 一般的なログレベルとのマッピング表 */
-    private static final Map<Level, String> loglevel = Collections.unmodifiableMap(new HashMap<>() {{
-        put(Level.SEVERE,  "ERROR");
-        put(Level.WARNING, "WARN");
-        put(Level.INFO,    "INFO");
-        put(Level.CONFIG,  "DEBUG");
-        put(Level.FINE,    "DEBUG");
-        put(Level.FINER,   "DEBUG");
-        put(Level.FINEST,  "DEBUG");
-    }});
+    private static final Map<Level, String> LOG_LEVEL = Map.of(
+    		Level.SEVERE, "ERROR"
+    		, Level.WARNING, "WARN"
+    		, Level.INFO, "INFO"
+    		, Level.CONFIG, "DEBUG"
+    		, Level.FINE, "DEBUG"
+    		, Level.FINER, "DEBUG"
+    		, Level.FINEST, "DEBUG");
 
     /** ログ出力ホストアドレス */
-    private static String hostname;
+    private static String HOSTNAME;
     static {
         try {
-            hostname = InetAddress.getLocalHost().getHostAddress();
+            HOSTNAME = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            hostname = "unknown_host";
+            HOSTNAME = "unknown_host";
         }
     }
+
+    /** パッケージクラス名処理用の正規表現 */
+    private static Pattern REGEX = Pattern.compile("\\.");
 
     /**
      *  指定されたログ・レコードをカスタム形式の文字列にフォーマット
      */
     @Override
     public String format(LogRecord record) {
-    	String[] packageClass = record.getSourceClassName().split("\\.");
+    	String[] packageClass = REGEX.split(record.getSourceClassName());
         StringBuilder sb = new StringBuilder();
-        sb.append(LocalDateTime.ofInstant(record.getInstant(), ZoneId.of("Asia/Tokyo")).format(formatter));
+        sb.append(LocalDateTime.ofInstant(record.getInstant(), ZoneId.systemDefault()).format(FORMATTER));
         sb.append(" ");
-        sb.append(hostname);
+        sb.append(HOSTNAME);
         sb.append(" ");
-        sb.append(loglevel.get(record.getLevel()));
+        sb.append(LOG_LEVEL.get(record.getLevel()));
         sb.append(" ");
         sb.append("[");
         sb.append("Thread-" + record.getThreadID());
