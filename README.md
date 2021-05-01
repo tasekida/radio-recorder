@@ -37,10 +37,14 @@
 ```
 
 ## アプリケーション
+-  モジュールグラフ
+![](doc/summary.png)  
 
-![](doc/summary.png)
-![](doc/radio-racorder.png)
-![](doc/classdiagram.png)
+-  パッケージグラフ
+![](doc/radio-racorder.png)  
+
+-  ダイアグラム
+![](doc/classdiagram.png)  
 
 ## ライセンス
 
