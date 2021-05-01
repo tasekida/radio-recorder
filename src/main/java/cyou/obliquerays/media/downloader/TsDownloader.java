@@ -16,7 +16,6 @@
 package cyou.obliquerays.media.downloader;
 
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpClient.Version;
@@ -37,7 +36,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cyou.obliquerays.media.config.RadioProperties;
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /**
  * HLS（HTTP Live Streaming）セグメントファイル（.ts）をダウンロードする処理<br>
@@ -53,6 +53,8 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
     /** ダウンロード済みのHLSセグメントファイル一覧 */
     private final Set<TsMedia> tsMedias = new HashSet<>(0);
 
+    private final String tsWorkDir;
+
 	/**
 	 * HLS（HTTP Live Streaming）セグメントファイル（.ts）をダウンロードする処理を初期化
 	 * @param _queue ダウンロード対象のHLSセグメントファイル情報一覧
@@ -66,10 +68,12 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
         		.executor(_executor);
 		if (RadioProperties.getProperties().isProxy()) {
 			builder = builder.proxy(RadioProperties.getProperties().getProxySelector());
-			if (RadioProperties.getProperties().isProxyAuth())
+			if (RadioProperties.getProperties().isProxyAuth()) {
 				builder = builder.authenticator(RadioProperties.getProperties().getProxyAuthenticator());
+			}
 		}
 	    this.client = builder.build();
+	    this.tsWorkDir = TsMediaTool.getTsWorkDir();
 	}
 
 	/**
@@ -82,16 +86,12 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 				LOGGER.log(Level.SEVERE, "HTTP #RESPONSE=ERROR", e);
 				return null;
 			} else {
+                StringBuilder msg = new StringBuilder("HTTP #RESPONSE=")
+                		.append(response.statusCode()).append("  #BODY=").append(response.body());
                 if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-                    StringBuilder msg = new StringBuilder()
-                    		.append("HTTP #RESPONSE=").append(response.statusCode())
-                    		.append("  #BODY=").append(response.body());
                     LOGGER.log(Level.INFO, msg.toString());
                     return response.body();
                 } else {
-                    StringBuilder msg = new StringBuilder()
-                    		.append("HTTP #RESPONSE=").append(response.statusCode())
-                    		.append("#BODY=").append(response.body());
                     LOGGER.log(Level.SEVERE, msg.toString());
                     return null;
                 }
@@ -108,7 +108,7 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 			if (!this.media().isEmpty()) {
 				TsMedia tsMedia = this.media().poll();
 				if (null != tsMedia) {
-					Path tsPath = this.tsUriToTsPath(tsMedia.getTsUri());
+					Path tsPath = TsMediaTool.tsUriToTsPath(this.tsWorkDir, tsMedia.getTsUri());
 					if (Files.notExists(tsPath)) {
 						LOGGER.log(Level.CONFIG, "URI=" + tsMedia.getTsUri());
 						HttpRequest request = HttpRequest.newBuilder()
@@ -131,23 +131,6 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 		} catch (ExecutionException e) {
 			LOGGER.log(Level.SEVERE, "HTTP送信クライアント実行中にエラーが発生", e);
 		}
-	}
-
-	/**
-	 * セグメントファイル（.ts）取得先のURIからセグメントファイル（.ts）を保存するファイルパス生成する関数
-	 * @param _tsUri セグメントファイル（.ts）取得先のURI
-	 * @return セグメントファイル（.ts）を保存するファイルパス生成する関数
-	 */
-	private Path tsUriToTsPath(URI _tsUri) {
-		LOGGER.log(Level.CONFIG, "tsUri=" + _tsUri);
-		String[] arrUri = _tsUri.getPath().split("/");
-		String path = new StringBuilder()
-				.append(RadioProperties.getProperties().getSaveDir())
-				.append("/").append(arrUri[arrUri.length-2])
-				.append("-").append(arrUri[arrUri.length-1]).toString();
-		Path tspath = Path.of(path).toAbsolutePath().normalize();
-		LOGGER.log(Level.CONFIG, "tspath=" + tspath);
-		return tspath;
 	}
 
 	/**

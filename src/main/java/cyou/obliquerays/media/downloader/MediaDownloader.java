@@ -17,14 +17,10 @@ package cyou.obliquerays.media.downloader;
 
 import java.util.Queue;
 
-/**
- * Queueへアクセスするインターフェース
- */
+/** Queueへアクセスするインターフェース */
 @FunctionalInterface
 public interface MediaDownloader<T> {
 
-	/**
-	 * @return Queue
-	 */
+	/** @return Queue */
 	Queue<T> media();
 }

@@ -36,7 +36,8 @@ import org.junit.jupiter.api.Test;
 
 import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
 
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /**
  * RedioRecProcessのUnitTest
@@ -69,10 +70,11 @@ class RadioRecProcessTest {
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 	         public boolean accept(Path file) throws IOException {
 	        	 String fileName = file.getFileName().toString();
-	             return fileName.matches("^.+\\.ts$") || fileName.matches("^.+\\.mp3$");
+//	             return fileName.matches("^.+\\.ts$") || fileName.matches("^.+\\.mp3$");
+	             return fileName.matches("^.+\\.ts$");
 	         }
 	    };
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of("."), filter)) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of(TsMediaTool.getTsWorkDir()), filter)) {
 			stream.forEach(t -> {
 				try {
 					Files.delete(t);
@@ -99,7 +101,7 @@ class RadioRecProcessTest {
 	        }
 	    };
 	    List<TsMedia> media = new ArrayList<>();
-	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("."), filter)) {
+	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of(TsMediaTool.getTsWorkDir()), filter)) {
 	    	dirStream.forEach(path -> {
 	    		TsMedia ts = new TsMedia(URI.create("https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8"));
 	    		ts.setTsPath(path);
@@ -110,6 +112,6 @@ class RadioRecProcessTest {
 		media.stream()
 	    	.peek(ts -> LOGGER.log(Level.INFO, "media=" + ts))
 	    	.forEach(ts -> Assertions.assertNotNull(ts.getTsPath()));
-		Assertions.assertTrue(Files.exists(Path.of("./NHK.mp3")));
+		Assertions.assertTrue(Files.exists(TsMediaTool.getMp3FilePath()));
 	}
 }

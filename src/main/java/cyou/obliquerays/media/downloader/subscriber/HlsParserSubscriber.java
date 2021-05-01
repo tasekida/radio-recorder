@@ -24,10 +24,9 @@ import java.util.concurrent.Flow.Subscription;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /**
  * HTTP Live Streamingのインデックス本文サブスクライバの実装<br>
@@ -37,34 +36,39 @@ public class HlsParserSubscriber implements Subscriber<String> {
     /** ロガー */
     private static final Logger LOGGER = Logger.getLogger(HlsParserSubscriber.class.getName());
 
-    /** セグメントファイル（.ts）パスの正規表現 */
-	private static final Pattern PATERN = Pattern.compile("^[^#].+\\.ts$");
+    /**
+     * HLS（HTTP Live Streaming）インデックスファイル（.m3u8）に
+     * 記載されているセグメントファイル（.ts）パスの正規表現
+     */
+	private static final Pattern TS_PATH_PATERN = Pattern.compile("^[^#].+\\.ts$");
 
 	/** セグメントファイル（.ts）パス一覧 */
 	private final Set<TsMedia> tsLines = new HashSet<>();
 
-	/** HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI */
-    private final URI m3u8Uri;
+    /** HLS（HTTP Live Streaming）URIの基底PATH */
+    private final URI hlsBaseURI;
 
-	/**
-	 * HTTP Live Streamingのインデックス本文サブスクライバのコンストラクタ
-	 * @param  _m3u8Uri HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI
-	 */
-	public HlsParserSubscriber(URI _m3u8Uri) {
-		this.m3u8Uri = _m3u8Uri;
+	/** HTTP Live Streamingのインデックス本文サブスクライバのコンストラクタ */
+	public HlsParserSubscriber() {
+		this.hlsBaseURI = TsMediaTool.getBaseURI();
 	}
 
 	/**
 	 * セグメントファイル（.ts）URIの作成
-	 * @param m3u8Uri インデックスファイル（.m3u8）のURI
-	 * @param tsPath セグメントファイル（.ts）のpath
+	 * @param _tsPath セグメントファイル（.ts）のpath
 	 * @return セグメントファイル（.ts）のURI
 	 */
-	private URI convertURI(URI m3u8Uri, String tsPath) {
+	private URI convertURI(String _tsPath) {
 		try {
-			String path = Stream.of(m3u8Uri.getPath().split("/")).map(s -> s.replaceFirst("^.+\\.m3u8$", tsPath)).collect(Collectors.joining("/"));
-			URI tsUri = new URI(m3u8Uri.getScheme(), m3u8Uri.getUserInfo(), m3u8Uri.getHost()
-					, m3u8Uri.getPort(), path, m3u8Uri.getQuery(), m3u8Uri.getFragment());
+			String path = this.hlsBaseURI.getPath() + _tsPath;
+			URI tsUri = new URI(
+					this.hlsBaseURI.getScheme()
+					, this.hlsBaseURI.getUserInfo()
+					, this.hlsBaseURI.getHost()
+					, this.hlsBaseURI.getPort()
+					, path
+					, this.hlsBaseURI.getQuery()
+					, this.hlsBaseURI.getFragment());
 			LOGGER.log(Level.CONFIG, "tsUri=" + tsUri);
 			return tsUri;
 		} catch (URISyntaxException e) {
@@ -84,22 +88,22 @@ public class HlsParserSubscriber implements Subscriber<String> {
 	/** @see java.util.concurrent.Flow.Subscriber#onSubscribe(Subscription) */
 	@Override
 	public void onSubscribe(Subscription _subscription) {
-		LOGGER.log(Level.CONFIG, new StringBuilder().append("subscription=").append(_subscription).toString());
+		LOGGER.log(Level.CONFIG, new StringBuilder("subscription=").append(_subscription).toString());
 		_subscription.request(Long.MAX_VALUE);
 	}
 
 	/** @see java.util.concurrent.Flow.Subscriber#onNext(Object) */
 	@Override
 	public void onNext(String _item) {
-		LOGGER.log(Level.CONFIG, new StringBuilder().append("item=").append(_item).toString());
-		if (PATERN.matcher(_item).matches())
-			this.tsLines.add(new TsMedia(this.convertURI(this.m3u8Uri, _item)));
+		LOGGER.log(Level.CONFIG, new StringBuilder("item=").append(_item).toString());
+		if (TS_PATH_PATERN.matcher(_item).matches())
+			this.tsLines.add(new TsMedia(this.convertURI(_item)));
 	}
 
 	/** @see java.util.concurrent.Flow.Subscriber#onError(Throwable) */
 	@Override
 	public void onError(Throwable _throwable) {
-		LOGGER.log(Level.CONFIG, new StringBuilder().append("throwable=").append(_throwable).toString());
+		LOGGER.log(Level.CONFIG, new StringBuilder("throwable=").append(_throwable).toString());
 		this.tsLines.clear();
 	}
 

@@ -33,9 +33,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /**
  * TsDownloaderのUnitTest
@@ -50,6 +52,10 @@ class TsDownloaderTest {
         try (InputStream resource = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(resource);
         }
+		Path workDir = Path.of(TsMediaTool.getTsWorkDir());
+		if (!Files.isDirectory(workDir) &&  Files.notExists(workDir)) {
+			Files.createDirectories(workDir);
+		}
 	}
 
 	/** @throws java.lang.Exception */
@@ -69,7 +75,7 @@ class TsDownloaderTest {
 	             return fileName.matches("^.+\\.ts$") || fileName.matches("^.+\\.mp3$");
 	         }
 	    };
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of("."), filter)) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of(TsMediaTool.getTsWorkDir()), filter)) {
 			stream.forEach(t -> {
 				try {
 					Files.delete(t);
@@ -93,7 +99,7 @@ class TsDownloaderTest {
 		var hlsDownloader = new HlsDownloader(queue, executor, uri);
 		var tsDownloader = new TsDownloader(queue, executor);
 		executor.execute(hlsDownloader);
-		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 20L, TimeUnit.SECONDS);
+		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 2L, TimeUnit.SECONDS);
 		Runnable tsCanceller = () -> tsHandle.cancel(false);
 		executor.schedule(tsCanceller, 600L, TimeUnit.SECONDS);
 		TimeUnit.SECONDS.sleep(5L);
@@ -118,6 +124,7 @@ class TsDownloaderTest {
 	 * @throws InterruptedException
 	 */
 	@Test
+	@Disabled
 	void testRun02() throws InterruptedException {
 		var queue = new ConcurrentLinkedQueue<TsMedia>();
 		for (int i = 238; i < 241; i++) {
@@ -128,7 +135,7 @@ class TsDownloaderTest {
 
 		var executor = Executors.newScheduledThreadPool(10);
 		var tsDownloader = new TsDownloader(queue, executor);
-		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 5L, TimeUnit.SECONDS);
+		var tsHandle = executor.scheduleAtFixedRate(tsDownloader, 0L, 2L, TimeUnit.SECONDS);
 
 	    while (!tsHandle.isDone() && !queue.isEmpty()) {
 	    	TimeUnit.SECONDS.sleep(1L);

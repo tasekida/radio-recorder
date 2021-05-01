@@ -30,8 +30,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import cyou.obliquerays.media.config.RadioProperties;
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /**
  * HLS（HTTP Live Streaming）セグメントファイル（.ts）を結合する処理<br>
@@ -54,10 +54,7 @@ public class TsEncoder {
 	public TsEncoder(List<TsMedia> _tsMedias) {
 		this.tsMedias = Objects.requireNonNull(_tsMedias);
 		if (this.tsMedias.isEmpty()) throw new IllegalArgumentException("'tsMedias' must not be empty");
-		this.mp3path = Path.of(
-				RadioProperties.getProperties().getSaveDir()
-				, RadioProperties.getProperties().getFilename())
-				.toAbsolutePath().normalize();
+		this.mp3path = TsMediaTool.getMp3FilePath();
 	}
 
 	/**
@@ -70,26 +67,8 @@ public class TsEncoder {
 		attrs.add("-threads");
 		attrs.add("2");
 		this.tsMedias.stream()
+			.sorted(TsMediaTool.getPathComparator())
 			.map(TsMedia::getTsPath)
-			.sorted((p1, p2) -> {
-				String[] arr1 = p1.getFileName().toString().split("-");
-				String[] arr2 = p2.getFileName().toString().split("-");
-				int index = arr1.length < arr2.length ? arr1.length : arr2.length;
-				for (int ret = 0, i = 0; i < index; i++) {
-					if (arr1[i].length() == arr2[i].length()) {
-						ret = arr1[i].compareTo(arr2[i]);
-					} else {
-						int padding = arr1[i].length() < arr2[i].length() ? arr2[i].length() : arr1[i].length();
-						String str1 = arr1[i].length() < padding ?  String.format("%" + padding + "s", arr1[i]).replace(" ", "0") : arr1[i];
-						String str2 = arr2[i].length() < padding ?  String.format("%" + padding + "s", arr2[i]).replace(" ", "0") : arr2[i];
-						ret = str1.compareTo(str2);
-					}
-					if (ret != 0) {
-						return ret;
-					}
-				}
-				return 0;
-			})
 			.forEach(f -> {
 				attrs.add("-i");
 				attrs.add(f.toAbsolutePath().normalize().toString());
@@ -129,7 +108,7 @@ public class TsEncoder {
 		Process ffmpeg = null;
 		try {
 			ProcessBuilder ffmpegBuilder = new ProcessBuilder(this.getEncodingAttributes());
-			ffmpegBuilder.directory(new File(RadioProperties.getProperties().getSaveDir()));
+			ffmpegBuilder.directory(new File(TsMediaTool.getTsWorkDir()));
 			ffmpegBuilder.redirectErrorStream(true);
 			ffmpeg = ffmpegBuilder.start();
 		} catch (IOException e) {

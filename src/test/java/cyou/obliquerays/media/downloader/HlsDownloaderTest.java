@@ -35,7 +35,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /** HlsDownloaderのUnitTest */
 class HlsDownloaderTest {
@@ -104,6 +105,7 @@ class HlsDownloaderTest {
 	    TimeUnit.SECONDS.sleep(5L);
 
 	    hlsDownloader.media().stream()
+	    	.sorted(TsMediaTool.getURIComparator())
 	    	.peek(media -> LOGGER.log(Level.INFO, "media=" + media))
 	    	.forEach(media -> Assertions.assertNotNull(media.getTsUri()));
 	}
