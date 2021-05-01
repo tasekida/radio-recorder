@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import cyou.obliquerays.media.command.TsEncoder;
 import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.downloader.NhkDownloader;
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
 import cyou.obliquerays.status.LockFileStatus;
 
 /**

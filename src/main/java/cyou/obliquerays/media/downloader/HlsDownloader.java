@@ -37,8 +37,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import cyou.obliquerays.media.config.RadioProperties;
-import cyou.obliquerays.media.downloader.model.TsMedia;
 import cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber;
+import cyou.obliquerays.media.model.TsMedia;
 
 /**
  * HLS（HTTP Live Streaming）のインデックスファイルを読み取る処理<br>
@@ -60,10 +60,6 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 
 	/**
 	 * HLS（HTTP Live Streaming）インデックスファイルを読み取る処理を初期化
-	 * @param _executor 内部で使用するHTTPクライアントを実行する{@linkplain java.util.concurrent.Executor Executor}
-	 */
-	/**
-	 * HLS（HTTP Live Streaming）インデックスファイルを読み取る処理を初期化
 	 * @param _queue ダウンロード対象のHLSセグメントファイル情報一覧
 	 * @param _executor 内部で使用するHTTPクライアントを実行する{@linkplain java.util.concurrent.Executor Executor}
 	 * @param _m3u8Uri HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI
@@ -77,8 +73,9 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
         		.executor(_executor);
 		if (RadioProperties.getProperties().isProxy()) {
 			builder = builder.proxy(RadioProperties.getProperties().getProxySelector());
-			if (RadioProperties.getProperties().isProxyAuth())
+			if (RadioProperties.getProperties().isProxyAuth()) {
 				builder = builder.authenticator(RadioProperties.getProperties().getProxyAuthenticator());
+			}
 		}
 	    this.client = builder.build();
 		this.request = HttpRequest.newBuilder()
@@ -123,9 +120,13 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
         LOGGER.log(Level.CONFIG, "URI=" + this.m3u8Uri);
 		try {
 			CompletableFuture<HttpResponse<Set<TsMedia>>> completableFuture = this.client
-					.sendAsync(this.request, BodyHandlers.fromLineSubscriber(new HlsParserSubscriber(this.m3u8Uri), HlsParserSubscriber::getMatchingLines, null));
+					.sendAsync(
+							this.request
+							, BodyHandlers.fromLineSubscriber(new HlsParserSubscriber(), HlsParserSubscriber::getMatchingLines, null));
 			Set<TsMedia> responce = completableFuture.handle(this.getHandle()).get();
-			responce.stream().filter(media -> !this.media().contains(media)).forEach(media -> this.media().offer(media));
+			responce.stream()
+				.filter(media -> !this.media().contains(media))
+				.forEach(media -> this.media().offer(media));
 		} catch (InterruptedException e) {
 			LOGGER.log(Level.SEVERE, "HTTP送信クライアント実行中に割り込みを検知", e);
 		} catch (ExecutionException e) {

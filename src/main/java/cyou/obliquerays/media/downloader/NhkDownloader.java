@@ -31,7 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cyou.obliquerays.media.config.RadioProperties;
-import cyou.obliquerays.media.downloader.model.TsMedia;
+import cyou.obliquerays.media.model.TsMedia;
+import cyou.obliquerays.media.model.TsMediaTool;
 
 /**
  * NHK第2放送のHLSよりセグメントファイル（.ts）をダウンロードする処理
@@ -63,28 +64,34 @@ public class NhkDownloader extends AbstractMediaDownloader<TsMedia> implements R
 		try {
 			LocalTime start = RadioProperties.getProperties().getStart();
 			LocalTime end = RadioProperties.getProperties().getEnd();
-			Duration duration = Duration.between(start, end).minusSeconds(90L);
+			Duration duration = Duration.between(start, end);
 
-			while (LocalTime.now().isBefore(start.plusSeconds(170L))) {
+			while (LocalTime.now().isBefore(start)) {
 				LOGGER.log(Level.CONFIG, "待機");
-				TimeUnit.SECONDS.sleep(10L);
+				TimeUnit.SECONDS.sleep(1L);
+			}
+			LOGGER.log(Level.INFO, "音声ファイルダウンロード開始");
+
+			Path workDir = Path.of(TsMediaTool.getTsWorkDir());
+			if (!Files.isDirectory(workDir) &&  Files.notExists(workDir)) {
+				Files.createDirectories(workDir);
 			}
 
-			Path saveDir = Path.of(RadioProperties.getProperties().getSaveDir());
-			if (!Files.isDirectory(saveDir) &&  Files.notExists(saveDir)) {
-				Files.createDirectories(saveDir);
-			}
+			var hlsHandle = this.executor.scheduleAtFixedRate(hlsDownloader, 0L, 10L, TimeUnit.SECONDS);
+			var tsHandle1 = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 2L, TimeUnit.SECONDS);
+			var tsHandle2 = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 2L, TimeUnit.SECONDS);
+			this.executor.schedule(() -> hlsHandle.cancel(false), duration.toSeconds(), TimeUnit.SECONDS);
 
-			var hlsHandle = this.executor.scheduleAtFixedRate(hlsDownloader, 0L, 20L, TimeUnit.SECONDS);
-			var tsHandle1 = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 1L, TimeUnit.SECONDS);
-			var tsHandle2 = this.executor.scheduleAtFixedRate(tsDownloader, 0L, 1L, TimeUnit.SECONDS);
-			this.executor.schedule(() -> hlsHandle.cancel(false), duration.toMinutes(), TimeUnit.MINUTES);
-			TimeUnit.MINUTES.sleep(duration.toMinutes());
+			while (LocalTime.now().isBefore(end)) {
+				LOGGER.log(Level.CONFIG, "待機");
+				TimeUnit.SECONDS.sleep(1L);
+			}
 
 			while (!hlsHandle.isDone() && !this.media().isEmpty()) {
 				LOGGER.log(Level.CONFIG, "NHK第2放送ダウンロード中");
 				TimeUnit.SECONDS.sleep(1L);
 			}
+			LOGGER.log(Level.INFO, "音声ファイルダウンロード終了");
 
 			this.executor.execute(() -> tsHandle1.cancel(false));
 			this.executor.execute(() -> tsHandle2.cancel(false));

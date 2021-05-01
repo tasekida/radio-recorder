@@ -4,7 +4,7 @@ metadata:
   name: radio-recorder
 build:
   artifacts:
-  - image: radio-recorder
+  - image: radio-recorder ### YOUR_IMAGE_NAME
     context: ./
     docker:
       dockerfile: manifests/docker/Dockerfile.graalvm11

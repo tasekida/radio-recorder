@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: nhk-english2
-        image: radio-recorder
+        image: radio-recorder ### YOUR_IMAGE_NAME
         lifecycle:
           preStop:
             exec:
@@ -49,29 +49,9 @@ metadata:
 data:
   radio.properties: |
     ### プログラムの起動モード
-    ### true=常時起動して設定された時間に繰り返し実行、ロックファイル削除かSIGTERMで終了
+    ### true=常時起動して毎日設定された時間に実行、ロックファイル削除かSIGTERMで終了
     ### false=開始時間から終了時間まで一度実行して終了）
     process: true
-
-    ### PROXY設定
-    proxy: false
-    proxy.host: proxyHostname
-    proxy.port: 8080
-    proxy.account: proxyAccount
-    proxy.password: proxyPassword
-
-    ### NHK第2放送のURI
-    radio.uri: https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8
-
-    ### 録音ファイル保存ディレクトリ
-    base.dir: /data/radio
-
-    ### 録音ファイル名
-    mp3.file: english2.mp3
-
-    ### 録音を実行する開始時間、終了時間
-    start.time: 06:15
-    end.time: 06:30
 
     ### プログラムの起動モード = PROCESSの時、録音を実行する曜日
     sunday: false
@@ -81,3 +61,34 @@ data:
     thursday: true
     friday: true
     saturday: false
+
+    ### 録音を実行する開始時間、終了時間
+    start.time: 06:15
+    end.time: 06:30
+
+    ### 録音ファイル保存ディレクトリ
+    ### プログラムのフォルダを起点とした相対パスも可能
+    base.dir: /data/radio
+
+    ### RADIOストリーミングのURL（初期値：NHK第2放送）
+    radio.uri: https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8
+
+    ### 録音ファイル名[prefix]-[name].[suffix]
+    ### [prefix]と[name]はDateTimeFormatterのパターン文字をサポート
+    ### パターン文字が無効な場合はそのまま文字列として使用
+    ### 【https://docs.oracle.com/javase/jp/11/docs/api/java.base/java/time/format/DateTimeFormatter.html】
+    mp3.file.prefix: english2
+    mp3.file.name: yyyyMMdd
+    mp3.file.suffix: mp3
+
+    ### PROXY設定
+    proxy: false
+    proxy.host: proxyHostname
+    proxy.port: 8080
+    proxy.account: proxyAccount
+    proxy.password: proxyPassword
+
+    ### ラジオストリーミングの録音開始時間と終了時間の遅延時間を調整（初期値：NHK第2放送）
+    ### マイナスの値をサポートします
+    start.adjustment.seconds: 190
+    end.adjustment.seconds: 30
