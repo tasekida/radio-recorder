@@ -143,6 +143,10 @@ public class RadioRecProcess {
 
         try (InputStream propLogging = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(propLogging);
+            LOGGER.log(Level.CONFIG, "logging.properties#handlers=" + LogManager.getLogManager().getProperty("handlers"));
+            LOGGER.log(Level.CONFIG, "logging.properties#.level=" + LogManager.getLogManager().getProperty(".level"));
+            LOGGER.log(Level.CONFIG, "logging.properties#java.util.logging.ConsoleHandler.level=" + LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.level"));
+            LOGGER.log(Level.CONFIG, "logging.properties#java.util.logging.ConsoleHandler.formatter=" + LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter"));
         } catch (Exception e) {
         	LOGGER.log(Level.SEVERE, "エラー終了", e);
         	returnCode = 1;
@@ -152,6 +156,9 @@ public class RadioRecProcess {
         try {
     		RadioRecProcess process = new RadioRecProcess();
     		process.execute();
+        } catch (InterruptedException e) {
+        	LOGGER.log(Level.INFO, "割り込み終了", e);
+        	returnCode = 0;
         } catch (Exception e) {
         	LOGGER.log(Level.SEVERE, "エラー終了", e);
         	returnCode = 1;

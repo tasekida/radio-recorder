@@ -3,7 +3,7 @@
  */
 module radio.recorder {
 	exports cyou.obliquerays.media;
-	exports cyou.obliquerays.logging;
+	opens cyou.obliquerays.logging to java.logging;
 
 	requires transitive java.logging;
 	requires java.net.http;
