@@ -1,0 +1,8 @@
+[
+    {
+        "name" : "cyou.obliquerays.logging.LogFormatter",
+        "methods" : [
+            { "name" : "<init>", "parameterTypes" : [] }
+        ]
+    }
+]

@@ -46,6 +46,7 @@ jar {
         attributes('Implementation-Version': version)
         attributes('Implementation-Vendor': 'cyou.obliquerays')
         attributes('Automatic-Module-Name': moduleName)
+        attributes('Main-Class': 'cyou.obliquerays.media.RadioRecProcess')
     }
     doLast {
         file('gradle/release').mkdirs()
