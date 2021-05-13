@@ -9,6 +9,8 @@ kind: DaemonSet
 metadata:
   namespace: radio
   name: nhk-english2
+  labels:
+    k8s-app: radio-recorder
 spec:
   selector:
     matchLabels:
