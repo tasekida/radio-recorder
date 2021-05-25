@@ -37,7 +37,7 @@ import cyou.obliquerays.media.model.TsMedia;
 import cyou.obliquerays.status.LockFileStatus;
 
 /**
- * NHKラジオ録画処理
+ * NHKラジオ録音処理
  */
 public class RadioRecProcess {
     /** ロガー */

@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +46,9 @@ public class TsEncoder {
     /** エンコード後のMP3ファイル */
     private final Path mp3path;
 
+    /** エンコード中のMP3ファイル */
+    private final Path mp3temp;
+
     /** エンコード対象のメディア */
     private final List<TsMedia> tsMedias;
 
@@ -55,6 +60,7 @@ public class TsEncoder {
 		this.tsMedias = Objects.requireNonNull(_tsMedias);
 		if (this.tsMedias.isEmpty()) throw new IllegalArgumentException("'tsMedias' must not be empty");
 		this.mp3path = TsMediaTool.getMp3FilePath();
+		this.mp3temp = TsMediaTool.getMp3TempPath();
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class TsEncoder {
 		attrs.add("-threads");
 		attrs.add("2");
 		attrs.add("-y");
-		attrs.add(this.mp3path.toString());
+		attrs.add(this.mp3temp.toString());
 	 	LOGGER.log(Level.CONFIG, attrs.toString());
 	 	return attrs;
 	}
@@ -130,6 +136,8 @@ public class TsEncoder {
 	    } finally {
 	    	ffmpeg.destroyForcibly();
 	    }
+
+		Files.move(this.mp3temp, this.mp3path, StandardCopyOption.ATOMIC_MOVE);
 
 		return this.mp3path;
 	}

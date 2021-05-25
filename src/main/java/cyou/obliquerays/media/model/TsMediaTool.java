@@ -133,6 +133,33 @@ public class TsMediaTool {
 	}
 
 	/**
+	 * 録音一次ファイル名[prefix]-[name].[suffix]の絶対パスを取得
+	 * @return 録音一次ファイル名[prefix]-[name].[suffix]の絶対パス
+	 */
+	public static synchronized Path getMp3TempPath () {
+		String baseDir = RadioProperties.getProperties().getBaseDir();
+		String mp3FilePrefix = Objects.requireNonNull(RadioProperties.getProperties().getMp3FilePrefix());
+    	try {
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mp3FilePrefix);
+    		mp3FilePrefix = LocalDate.now().format(formatter);
+    	} catch (IllegalArgumentException | DateTimeException e) {
+    		// ignore
+    	}
+    	String mp3FileName = Objects.requireNonNull(RadioProperties.getProperties().getMp3FileName());
+    	try {
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mp3FileName);
+    		mp3FileName = LocalDate.now().format(formatter);
+    	} catch (IllegalArgumentException | DateTimeException e) {
+    		// ignore
+    	}
+    	String mp3TempSuffix = Objects.requireNonNull(RadioProperties.getProperties().getMp3TempSuffix());
+    	StringBuilder mp3File =
+    			new StringBuilder(mp3FilePrefix).append("-")
+    			.append(mp3FileName).append(".").append(mp3TempSuffix);
+		return Path.of(baseDir, mp3File.toString()).toAbsolutePath().normalize();
+	}
+
+	/**
 	 * TsMediaのCollectionをPATHでソートするルールを取得
 	 * @return TsMediaのCollectionをPATHでソートするルール
 	 */

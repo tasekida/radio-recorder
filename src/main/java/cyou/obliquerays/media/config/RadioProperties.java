@@ -60,6 +60,7 @@ public final class RadioProperties extends Properties {
 	private final String mp3FilePrefix;
 	private final String mp3FileName;
 	private final String mp3FileSuffix;
+	private final String mp3TempSuffix;
 	private final boolean proxy;
 	private final boolean proxyAuth;
 	private final ProxySelector proxySelector;
@@ -99,6 +100,7 @@ public final class RadioProperties extends Properties {
     	this.mp3FilePrefix = Objects.requireNonNull(this.getProperty("mp3.file.prefix"));
     	this.mp3FileName = Objects.requireNonNull(this.getProperty("mp3.file.name"));
     	this.mp3FileSuffix = Objects.requireNonNull(this.getProperty("mp3.file.suffix"));
+    	this.mp3TempSuffix = Objects.requireNonNull(this.getProperty("mp3.temp.suffix"));
 
     	this.proxy = Boolean.parseBoolean(this.getProperty("proxy"));
     	if (this.proxy) {
@@ -185,6 +187,15 @@ public final class RadioProperties extends Properties {
 	 */
 	public String getMp3FileSuffix() {
 		return this.mp3FileSuffix;
+	}
+
+	/**
+	 * 録音一次ファイル名[prefix]-[name].[suffix]の[suffix]<br>
+	 * DateTimeFormatterの解析用パターンをサポート
+	 * @return 録音ファイル名の[suffix]
+	 */
+	public String getMp3TempSuffix() {
+		return this.mp3TempSuffix;
 	}
 
 	/** @return 録音開始時間 */
