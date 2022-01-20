@@ -17,6 +17,8 @@ package cyou.obliquerays.media.downloader;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -27,8 +29,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.model.TsMedia;
@@ -39,7 +39,7 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 public class NhkDownloader extends AbstractMediaDownloader<TsMedia> implements Runnable {
 	/** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(NhkDownloader.class.getName());
+    private static final Logger LOG = System.getLogger(NhkDownloader.class.getName());
 
     /** 内部で使用する{@linkplain java.util.concurrent.ScheduledExecutorService ScheduledExecutorService} */
     private final ScheduledExecutorService executor;
@@ -67,10 +67,10 @@ public class NhkDownloader extends AbstractMediaDownloader<TsMedia> implements R
 			Duration duration = Duration.between(start, end);
 
 			while (LocalTime.now().isBefore(start)) {
-				LOGGER.log(Level.CONFIG, "待機");
+				LOG.log(Level.DEBUG, "待機");
 				TimeUnit.SECONDS.sleep(1L);
 			}
-			LOGGER.log(Level.INFO, "音声ファイルダウンロード開始");
+			LOG.log(Level.INFO, "音声ファイルダウンロード開始");
 
 			Path workDir = Path.of(TsMediaTool.getTsWorkDir());
 			if (!Files.isDirectory(workDir) &&  Files.notExists(workDir)) {
@@ -83,27 +83,27 @@ public class NhkDownloader extends AbstractMediaDownloader<TsMedia> implements R
 			this.executor.schedule(() -> hlsHandle.cancel(false), duration.toSeconds(), TimeUnit.SECONDS);
 
 			while (LocalTime.now().isBefore(end)) {
-				LOGGER.log(Level.CONFIG, "待機");
+				LOG.log(Level.DEBUG, "待機");
 				TimeUnit.SECONDS.sleep(1L);
 			}
 
 			while (!hlsHandle.isDone() && !this.media().isEmpty()) {
-				LOGGER.log(Level.CONFIG, "NHK第2放送ダウンロード中");
+				LOG.log(Level.DEBUG, "NHK第2放送ダウンロード中");
 				TimeUnit.SECONDS.sleep(1L);
 			}
-			LOGGER.log(Level.INFO, "音声ファイルダウンロード終了");
+			LOG.log(Level.INFO, "音声ファイルダウンロード終了");
 
 			this.executor.execute(() -> tsHandle1.cancel(false));
 			this.executor.execute(() -> tsHandle2.cancel(false));
 		    while (!tsHandle1.isDone() || !tsHandle2.isDone()) {
-    			LOGGER.log(Level.CONFIG, "NHK第2放送ダウンロード中");
+		    	LOG.log(Level.DEBUG, "NHK第2放送ダウンロード中");
     			TimeUnit.SECONDS.sleep(1L);
 		    }
 		} catch (InterruptedException e) {
-			LOGGER.log(Level.SEVERE, "NHK第2放送ダウンロード中に割り込みを検知", e);
+			LOG.log(Level.ERROR, "NHK第2放送ダウンロード中に割り込みを検知", e);
 			throw new IllegalStateException(e);
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "NHK第2放送ダウンロード中にIOエラーを検知", e);
+			LOG.log(Level.ERROR, "NHK第2放送ダウンロード中にIOエラーを検知", e);
 			throw new UncheckedIOException(e);
 		}
 

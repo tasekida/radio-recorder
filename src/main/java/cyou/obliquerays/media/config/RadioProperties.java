@@ -18,6 +18,8 @@ package cyou.obliquerays.media.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.Authenticator;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
@@ -34,8 +36,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import cyou.obliquerays.media.downloader.authenticator.ProxyAuthenticator;
 
@@ -44,7 +44,7 @@ import cyou.obliquerays.media.downloader.authenticator.ProxyAuthenticator;
  */
 public final class RadioProperties extends Properties {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(RadioProperties.class.getName());
+    private static final Logger LOG = System.getLogger(RadioProperties.class.getName());
 
     /** プロパティファイル名 */
 	private static final String PROPERTY_FILENAME = "radio.properties";
@@ -70,12 +70,12 @@ public final class RadioProperties extends Properties {
 
 	/** コンストラクタ */
 	private RadioProperties() {
-		LOGGER.log(Level.CONFIG, "RadioProperties");
+		LOG.log(Level.DEBUG, "RadioProperties");
 
     	try (InputStream in = this.getInputStream(PROPERTY_FILENAME)) {
     		this.load(in);
     	} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "設定ファイルの読み取りに失敗#" + PROPERTY_FILENAME, e);
+    		LOG.log(Level.ERROR, "設定ファイルの読み取りに失敗#" + PROPERTY_FILENAME, e);
 			throw new UncheckedIOException(e);
     	}
     	this.process = Boolean.parseBoolean(this.getProperty("process"));
@@ -241,9 +241,9 @@ public final class RadioProperties extends Properties {
 
 	/** @return パラメータ一覧へアクセス */
 	public static RadioProperties getProperties() {
-		if (null == PROP) {
+		if (Objects.isNull(PROP)) {
 			synchronized (RadioProperties.class) {
-				if (null == PROP) {
+				if (Objects.isNull(PROP)) {
 					PROP = new RadioProperties();
 				}
 			}

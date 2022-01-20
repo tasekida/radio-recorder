@@ -1,11 +1,10 @@
 plugins {
     id 'application'
     id 'eclipse'
-    id 'org.javamodularity.moduleplugin' version '1.7.0'
+    id 'org.javamodularity.moduleplugin' version '1.8.10'
     id 'life.expert.archidoc' version '1.0.11'
 }
 
-wrapper.gradleVersion = '7.0.2'
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 modularity.improveEclipseClasspathFile()
@@ -18,8 +17,8 @@ repositories {
 dependencies {
     configurations.implementation.canBeResolved = true
 
-    testImplementation 'com.ginsberg:junit5-system-exit:1.1.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testImplementation 'com.ginsberg:junit5-system-exit:1.1.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
@@ -29,8 +28,8 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
     withJavadocJar()
 }
@@ -77,12 +76,16 @@ tasks.withType(Javadoc) {
     options {
         memberLevel = JavadocMemberLevel.PRIVATE
         encoding = 'UTF-8'
-        links("https://docs.oracle.com/javase/jp/11/docs/api/")
+        links('https://docs.oracle.com/javase/jp/17/docs/api/')
     }
 }
 
 compileTestJava {
-    onlyIf { project.hasProperty('goTest') }
+//    onlyIf { project.hasProperty('goTest') }
+    options.compilerArgs << '-Xlint:unchecked'
+    moduleOptions {
+        compileOnClasspath = true
+    }
 }
 
 test {

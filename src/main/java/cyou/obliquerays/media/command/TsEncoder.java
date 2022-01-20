@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,8 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import cyou.obliquerays.media.model.TsMedia;
@@ -41,7 +41,7 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 public class TsEncoder {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(TsEncoder.class.getName());
+    private static final Logger LOG = System.getLogger(TsEncoder.class.getName());
 
     /** エンコード後のMP3ファイル */
     private final Path mp3path;
@@ -98,7 +98,7 @@ public class TsEncoder {
 		attrs.add("2");
 		attrs.add("-y");
 		attrs.add(this.mp3temp.toString());
-	 	LOGGER.log(Level.CONFIG, attrs.toString());
+		LOG.log(Level.DEBUG, attrs.toString());
 	 	return attrs;
 	}
 
@@ -118,20 +118,20 @@ public class TsEncoder {
 			ffmpegBuilder.redirectErrorStream(true);
 			ffmpeg = ffmpegBuilder.start();
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "FFMPEGの起動に失敗", e);
+			LOG.log(Level.ERROR, "FFMPEGの起動に失敗", e);
 			throw e;
 		}
 
 		try (Stream<String> lines = new BufferedReader(new InputStreamReader(ffmpeg.getInputStream(), StandardCharsets.UTF_8)).lines()) {
-			lines.forEach(s -> LOGGER.log(Level.INFO, s));
+			lines.forEach(s -> LOG.log(Level.INFO, s));
 			Future<Boolean> result = ffmpeg.onExit().thenApply(p -> p.exitValue() == 0);
 			if (result.get()) {
-				LOGGER.log(Level.INFO, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
+				LOG.log(Level.INFO, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
 			} else {
-				LOGGER.log(Level.SEVERE, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
+				LOG.log(Level.ERROR, "MP3エンコード終了 exitCode = " + ffmpeg.exitValue());
 			}
 		} catch (InterruptedException | ExecutionException e) {
-	    	LOGGER.log(Level.SEVERE, "MP3エンコードを中断", e);
+			LOG.log(Level.ERROR, "MP3エンコードを中断", e);
 	    	throw e;
 	    } finally {
 	    	ffmpeg.destroyForcibly();

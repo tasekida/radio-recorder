@@ -15,14 +15,14 @@
  */
 package cyou.obliquerays.media.downloader.subscriber;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.Flow.Subscription;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import cyou.obliquerays.media.model.TsMedia;
@@ -34,8 +34,8 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 public class HlsParserSubscriber implements Subscriber<String> {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(HlsParserSubscriber.class.getName());
-
+    private static final Logger LOG = System.getLogger(HlsParserSubscriber.class.getName());
+    
     /**
      * HLS（HTTP Live Streaming）インデックスファイル（.m3u8）に
      * 記載されているセグメントファイル（.ts）パスの正規表現
@@ -69,7 +69,7 @@ public class HlsParserSubscriber implements Subscriber<String> {
 					, path
 					, this.hlsBaseURI.getQuery()
 					, this.hlsBaseURI.getFragment());
-			LOGGER.log(Level.CONFIG, "tsUri=" + tsUri);
+			LOG.log(Level.DEBUG, "tsUri=" + tsUri);
 			return tsUri;
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException(e);
@@ -81,21 +81,21 @@ public class HlsParserSubscriber implements Subscriber<String> {
 	 * @return セグメントファイル（.ts）のURI一覧
 	 */
 	public Set<TsMedia> getMatchingLines() {
-		LOGGER.log(Level.CONFIG, "");
+		LOG.log(Level.DEBUG, "");
 		return this.tsLines;
 	}
 
 	/** @see java.util.concurrent.Flow.Subscriber#onSubscribe(Subscription) */
 	@Override
 	public void onSubscribe(Subscription _subscription) {
-		LOGGER.log(Level.CONFIG, new StringBuilder("subscription=").append(_subscription).toString());
+		LOG.log(Level.DEBUG, new StringBuilder("subscription=").append(_subscription).toString());
 		_subscription.request(Long.MAX_VALUE);
 	}
 
 	/** @see java.util.concurrent.Flow.Subscriber#onNext(Object) */
 	@Override
 	public void onNext(String _item) {
-		LOGGER.log(Level.CONFIG, new StringBuilder("item=").append(_item).toString());
+		LOG.log(Level.DEBUG, new StringBuilder("item=").append(_item).toString());
 		if (TS_PATH_PATERN.matcher(_item).matches())
 			this.tsLines.add(new TsMedia(this.convertURI(_item)));
 	}
@@ -103,13 +103,13 @@ public class HlsParserSubscriber implements Subscriber<String> {
 	/** @see java.util.concurrent.Flow.Subscriber#onError(Throwable) */
 	@Override
 	public void onError(Throwable _throwable) {
-		LOGGER.log(Level.CONFIG, new StringBuilder("throwable=").append(_throwable).toString());
+		LOG.log(Level.DEBUG, new StringBuilder("throwable=").append(_throwable).toString());
 		this.tsLines.clear();
 	}
 
 	/** @see java.util.concurrent.Flow.Subscriber#onComplete() */
 	@Override
 	public void onComplete() {
-		LOGGER.log(Level.CONFIG, "");
+		LOG.log(Level.DEBUG, "");
 	}
 }

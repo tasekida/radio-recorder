@@ -17,6 +17,8 @@ package cyou.obliquerays.media.command;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -25,9 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +40,7 @@ import cyou.obliquerays.media.model.TsMedia;
 /** TsEncoderのUnitTest */
 class TsEncoderTest {
 	/** ロガー */
-	private static final Logger LOGGER = Logger.getLogger(TsEncoderTest.class.getName());
+	private static final Logger LOG = System.getLogger(TsEncoderTest.class.getName());
 
 	/** @throws java.lang.Exception */
 	@BeforeAll
@@ -48,9 +48,9 @@ class TsEncoderTest {
     	try (InputStream resource = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(resource);
         } catch (Throwable t) {
-        	LOGGER.log(Level.SEVERE, "エラー終了", t);
+        	LOG.log(Level.ERROR, "エラー終了", t);
         }
-		Arrays.stream(System.getenv("Path").split(";")).forEach(str -> LOGGER.log(Level.CONFIG, str));
+		Arrays.stream(System.getenv("Path").split(";")).forEach(str -> LOG.log(Level.DEBUG, str));
 	}
 
 	/** @throws java.lang.Exception */
@@ -80,7 +80,7 @@ class TsEncoderTest {
 	        }
 	    };
 	    List<TsMedia> media = new ArrayList<>();
-	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("20210405"), filter)) {
+	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of("20220120"), filter)) {
 	    	dirStream.forEach(path -> {
 	    		TsMedia ts = new TsMedia(URI.create("https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8"));
 	    		ts.setTsPath(path.toAbsolutePath().normalize());
@@ -88,12 +88,11 @@ class TsEncoderTest {
 	    	});
 	    }
 
-		media.stream().forEach(tsMedia -> LOGGER.log(Level.INFO, "download=" + tsMedia));
+		media.stream().forEach(tsMedia -> LOG.log(Level.INFO, "download=" + tsMedia));
 
 		TsEncoder recorder = new TsEncoder(media);
 		Path result = recorder.record();
 
-		LOGGER.log(Level.INFO, "result="+ result);
+		LOG.log(Level.INFO, "result="+ result);
 	}
-
 }

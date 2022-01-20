@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -38,14 +39,16 @@ public class LogFormatter extends Formatter {
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnnnnn");
 
     /** 一般的なログレベルとのマッピング表 */
-    private static final Map<Level, String> LOG_LEVEL = Map.of(
-    		Level.SEVERE, "ERROR"
-    		, Level.WARNING, "WARN"
-    		, Level.INFO, "INFO"
-    		, Level.CONFIG, "DEBUG"
-    		, Level.FINE, "DEBUG"
-    		, Level.FINER, "DEBUG"
-    		, Level.FINEST, "DEBUG");
+    private static final Map<Level, System.Logger.Level> LOG_LEVEL = Map.of(
+    		Level.OFF, System.Logger.Level.OFF
+    		, Level.SEVERE, System.Logger.Level.ERROR
+    		, Level.WARNING, System.Logger.Level.WARNING
+    		, Level.INFO, System.Logger.Level.INFO
+    		, Level.CONFIG, System.Logger.Level.INFO
+    		, Level.FINE, System.Logger.Level.DEBUG
+    		, Level.FINER, System.Logger.Level.TRACE
+    		, Level.FINEST, System.Logger.Level.TRACE
+    		, Level.ALL, System.Logger.Level.ALL);
 
     /** ログ出力ホストアドレス */
     private static String HOSTNAME;
@@ -74,7 +77,7 @@ public class LogFormatter extends Formatter {
         sb.append(LOG_LEVEL.get(record.getLevel()));
         sb.append(" ");
         sb.append("[");
-        sb.append("Thread-" + record.getThreadID());
+        sb.append("Thread-" + record.getLongThreadID());
         sb.append("] ");
         sb.append("[");
         sb.append(packageClass[packageClass.length-1]);
@@ -83,7 +86,7 @@ public class LogFormatter extends Formatter {
         sb.append("] ");
         sb.append(formatMessage(record));
         sb.append(System.lineSeparator());
-        if (record.getThrown() != null) {
+        if (Objects.nonNull(record.getThrown())) {
             StringWriter stringWriter = new StringWriter();
             record.getThrown().printStackTrace(new PrintWriter(stringWriter));
             sb.append(stringWriter.toString());

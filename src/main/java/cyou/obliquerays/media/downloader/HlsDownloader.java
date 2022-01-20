@@ -15,6 +15,8 @@
  */
 package cyou.obliquerays.media.downloader;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -32,8 +34,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import cyou.obliquerays.media.config.RadioProperties;
@@ -47,7 +47,7 @@ import cyou.obliquerays.media.model.TsMedia;
  */
 public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements Runnable {
 	/** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(HlsDownloader.class.getName());
+    private static final Logger LOG = System.getLogger(HlsDownloader.class.getName());
 
     /** HLS（HTTP Live Streaming）インデックスファイル（.m3u8）のURI */
     private final URI m3u8Uri;
@@ -93,19 +93,18 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 	private BiFunction<HttpResponse<Set<TsMedia>>, Throwable, Set<TsMedia>> getHandle() {
 		return (response, e) -> {
 			if (Optional.ofNullable(e).isPresent()) {
-				LOGGER.log(Level.SEVERE, "HTTP #RESPONSE=ERROR", e);
+				LOG.log(Level.ERROR, "HTTP #RESPONSE=ERROR", e);
 				return Collections.emptySet();
 			} else {
                 if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-                    LOGGER.log(Level.INFO, "HTTP #RESPONSE=" + response.statusCode());
+                	LOG.log(Level.INFO, "HTTP #RESPONSE=" + response.statusCode());
                 } else {
-                    StringBuilder msg = new StringBuilder()
-                    		.append("HTTP #RESPONSE=").append(response.statusCode())
-                    		.append("#BODY=").append(response.body().stream()
+                    String msg = new StringBuilder("HTTP #RESPONSE=").append(response.statusCode()).append("#BODY=")
+                    		.append(response.body().stream()
                     				.map(TsMedia::getTsUri)
                     				.map(URI::toString)
-                    				.collect(Collectors.joining(System.lineSeparator())));
-                    LOGGER.log(Level.SEVERE, msg.toString());
+                    				.collect(Collectors.joining(System.lineSeparator()))).toString();
+                    LOG.log(Level.ERROR, msg);
                 }
 				return response.body();
 			}
@@ -117,7 +116,7 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 	 */
 	@Override
 	public void run() {
-        LOGGER.log(Level.CONFIG, "URI=" + this.m3u8Uri);
+		LOG.log(Level.DEBUG, "URI=" + this.m3u8Uri);
 		try {
 			CompletableFuture<HttpResponse<Set<TsMedia>>> completableFuture = this.client
 					.sendAsync(
@@ -128,9 +127,9 @@ public class HlsDownloader extends AbstractMediaDownloader<TsMedia> implements R
 				.filter(media -> !this.media().contains(media))
 				.forEach(media -> this.media().offer(media));
 		} catch (InterruptedException e) {
-			LOGGER.log(Level.SEVERE, "HTTP送信クライアント実行中に割り込みを検知", e);
+			LOG.log(Level.ERROR, "HTTP送信クライアント実行中に割り込みを検知", e);
 		} catch (ExecutionException e) {
-			LOGGER.log(Level.SEVERE, "HTTP送信クライアント実行中にエラーが発生", e);
+			LOG.log(Level.ERROR, "HTTP送信クライアント実行中にエラーが発生", e);
 		}
 	}
 }

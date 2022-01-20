@@ -17,6 +17,8 @@ package cyou.obliquerays.media;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -26,9 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import cyou.obliquerays.media.command.TsEncoder;
 import cyou.obliquerays.media.config.RadioProperties;
@@ -41,7 +41,7 @@ import cyou.obliquerays.status.LockFileStatus;
  */
 public class RadioRecProcess {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(RadioRecProcess.class.getName());
+    private static final Logger LOG = System.getLogger(RadioRecProcess.class.getName());
 
     /** スレッド管理 */
 	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
@@ -58,7 +58,7 @@ public class RadioRecProcess {
 					new LockFileStatus(Thread.currentThread(), lockFile);
 			this.executor.scheduleAtFixedRate(lockFileStatus, 5L, 1L, TimeUnit.SECONDS);
 		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "プロセス実行時存在ファイルの管理に失敗#" + lockFile, e);
+			LOG.log(Level.ERROR, "プロセス実行時存在ファイルの管理に失敗#" + lockFile, e);
 			throw e;
 		}
 	}
@@ -100,7 +100,7 @@ public class RadioRecProcess {
 		try {
 			do {
 				if (!RadioProperties.getProperties().getDayOfWeeks().contains(DayOfWeek.from(LocalDate.now()))) {
-					LOGGER.log(Level.CONFIG, "待機");
+					LOG.log(Level.DEBUG, "待機");
 					TimeUnit.HOURS.sleep(1L);
 					continue;
 				}
@@ -108,21 +108,21 @@ public class RadioRecProcess {
 				LocalTime start = RadioProperties.getProperties().getStart();
 				LocalTime end = RadioProperties.getProperties().getEnd();
 				if (start.minusMinutes(2L).isAfter(LocalTime.now()) || end.minusMinutes(1L).isBefore(LocalTime.now())) {
-					LOGGER.log(Level.CONFIG, "待機");
+					LOG.log(Level.DEBUG, "待機");
 					TimeUnit.MINUTES.sleep(1L);
 					continue;
 				}
 
 				List<TsMedia> media = this.download();
-				media.stream().forEach(tsMedia -> LOGGER.log(Level.CONFIG, "downloaded=" + tsMedia));
+				media.stream().forEach(tsMedia -> LOG.log(Level.DEBUG, "downloaded=" + tsMedia));
 				Path mp3 = this.encode(media);
-				LOGGER.log(Level.INFO, "録音ファイル = "+ mp3);
+				LOG.log(Level.INFO, "録音ファイル = "+ mp3);
 
 			} while (RadioProperties.getProperties().isProcess());
 
 		} catch (Exception e) {
 
-			LOGGER.log(Level.SEVERE, "エラー終了", e);
+			LOG.log(Level.ERROR, "エラー終了", e);
 
 		} finally {
 
@@ -143,12 +143,12 @@ public class RadioRecProcess {
 
         try (InputStream propLogging = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(propLogging);
-            LOGGER.log(Level.CONFIG, "logging.properties#handlers=" + LogManager.getLogManager().getProperty("handlers"));
-            LOGGER.log(Level.CONFIG, "logging.properties#.level=" + LogManager.getLogManager().getProperty(".level"));
-            LOGGER.log(Level.CONFIG, "logging.properties#java.util.logging.ConsoleHandler.level=" + LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.level"));
-            LOGGER.log(Level.CONFIG, "logging.properties#java.util.logging.ConsoleHandler.formatter=" + LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter"));
+            LOG.log(Level.DEBUG, "logging.properties#handlers=" + LogManager.getLogManager().getProperty("handlers"));
+            LOG.log(Level.DEBUG, "logging.properties#.level=" + LogManager.getLogManager().getProperty(".level"));
+            LOG.log(Level.DEBUG, "logging.properties#java.util.logging.ConsoleHandler.level=" + LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.level"));
+            LOG.log(Level.DEBUG, "logging.properties#java.util.logging.ConsoleHandler.formatter=" + LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter"));
         } catch (Exception e) {
-        	LOGGER.log(Level.SEVERE, "エラー終了", e);
+        	LOG.log(Level.ERROR, "エラー終了", e);
         	returnCode = 1;
         	System.exit(returnCode);
         }
@@ -157,10 +157,10 @@ public class RadioRecProcess {
     		RadioRecProcess process = new RadioRecProcess();
     		process.execute();
         } catch (InterruptedException e) {
-        	LOGGER.log(Level.INFO, "割り込み終了", e);
+        	LOG.log(Level.INFO, "割り込み終了", e);
         	returnCode = 0;
         } catch (Exception e) {
-        	LOGGER.log(Level.SEVERE, "エラー終了", e);
+        	LOG.log(Level.ERROR, "エラー終了", e);
         	returnCode = 1;
         	throw e;
         } finally {

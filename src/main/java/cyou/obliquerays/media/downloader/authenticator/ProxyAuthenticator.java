@@ -15,17 +15,17 @@
  */
 package cyou.obliquerays.media.downloader.authenticator;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Proxy認証情報の管理
  */
 public class ProxyAuthenticator extends Authenticator {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(ProxyAuthenticator.class.getName());
+    private static final Logger LOG = System.getLogger(ProxyAuthenticator.class.getName());
 
 	/** Proxyアカウント */
 	private final String proxyUser;
@@ -50,9 +50,9 @@ public class ProxyAuthenticator extends Authenticator {
 	@Override
 	protected PasswordAuthentication getPasswordAuthentication() {
 		if (this.getRequestorType() == RequestorType.PROXY) {
-			LOGGER.log(Level.CONFIG, this.getRequestingURL().toString());
+			LOG.log(Level.DEBUG, this.getRequestingURL().toString());
 			char[] passwd = this.getProxyPasswd().toCharArray();
-			LOGGER.log(Level.CONFIG, this.getProxyUser());
+			LOG.log(Level.DEBUG, this.getProxyUser());
 			return new PasswordAuthentication(this.getProxyUser(), passwd);
 		}
 		return null;

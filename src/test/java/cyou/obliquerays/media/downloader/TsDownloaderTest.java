@@ -17,6 +17,8 @@ package cyou.obliquerays.media.downloader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -24,9 +26,7 @@ import java.nio.file.Path;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -44,7 +44,7 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 class TsDownloaderTest {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(TsDownloaderTest.class.getName());
+    private static final Logger LOG = System.getLogger(TsDownloaderTest.class.getName());
 
 	/** @throws java.lang.Exception */
 	@BeforeAll
@@ -114,7 +114,7 @@ class TsDownloaderTest {
 	    TimeUnit.SECONDS.sleep(5L);
 
 	    tsDownloader.getTsMedias().stream()
-	    	.peek(media -> LOGGER.log(Level.INFO, "media=" + media))
+	    	.peek(media -> LOG.log(Level.INFO, "media=" + media))
 	    	.peek(media -> Assertions.assertNotNull(media.getTsUri()))
 	    	.forEach(media -> Assertions.assertNotNull(media.getTsPath()));
 	}
@@ -150,7 +150,7 @@ class TsDownloaderTest {
 	    TimeUnit.SECONDS.sleep(5L);
 
 	    tsDownloader.getTsMedias().stream()
-	    	.peek(media -> LOGGER.log(Level.INFO, "media=" + media))
+	    	.peek(media -> LOG.log(Level.INFO, "media=" + media))
 	    	.peek(media -> Assertions.assertNotNull(media.getTsUri()))
 	    	.forEach(media -> Assertions.assertNotNull(media.getTsPath()));
 	}

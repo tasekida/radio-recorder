@@ -17,14 +17,14 @@ package cyou.obliquerays.media.downloader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +40,7 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 class NhkDownloaderTest {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(NhkDownloaderTest.class.getName());
+    private static final Logger LOG = System.getLogger(NhkDownloaderTest.class.getName());
 
 	/** @throws java.lang.Exception */
 	@BeforeAll
@@ -88,7 +88,7 @@ class NhkDownloaderTest {
 		var nhkDownloader = new NhkDownloader(executor);
 		var future = executor.submit(nhkDownloader);
 		while (!future.isDone()) {
-			TimeUnit.SECONDS.sleep(5L);
+			TimeUnit.SECONDS.sleep(30L);
 		}
 
 		executor.shutdown();
@@ -97,7 +97,7 @@ class NhkDownloaderTest {
 		TimeUnit.SECONDS.sleep(5L);
 
 		nhkDownloader.getTsMedias().stream()
-	    	.peek(media -> LOGGER.log(Level.INFO, "media=" + media))
+	    	.peek(media -> LOG.log(Level.INFO, "media=" + media))
 	    	.peek(media -> Assertions.assertNotNull(media.getTsUri()))
 	    	.forEach(media -> Assertions.assertNotNull(media.getTsPath()));
 	}

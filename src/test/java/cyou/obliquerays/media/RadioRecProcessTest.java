@@ -17,15 +17,15 @@ package cyou.obliquerays.media;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -44,15 +44,15 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 class RadioRecProcessTest {
 
-	private static final Logger LOGGER = Logger.getLogger(RadioRecProcessTest.class.getName());
+	private static final Logger LOG = System.getLogger(RadioRecProcessTest.class.getName());
 
 	/** @throws java.lang.Exception */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-    	try (InputStream resource = ClassLoader.getSystemResourceAsStream("logging.properties")) {
+		try (InputStream resource = ClassLoader.getSystemResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(resource);
         } catch (Throwable t) {
-        	LOGGER.log(Level.SEVERE, "エラー終了", t);
+        	LOG.log(Level.ERROR, "エラー終了", t);
         }
 	}
 
@@ -110,8 +110,8 @@ class RadioRecProcessTest {
 	    }
 
 		media.stream()
-	    	.peek(ts -> LOGGER.log(Level.INFO, "media=" + ts))
-	    	.forEach(ts -> Assertions.assertNotNull(ts.getTsPath()));
+	    	.peek(ts -> LOG.log(Level.INFO, "media=" + ts))
+			.forEach(ts -> Assertions.assertNotNull(ts.getTsPath()));
 		Assertions.assertTrue(Files.exists(TsMediaTool.getMp3FilePath()));
 	}
 }

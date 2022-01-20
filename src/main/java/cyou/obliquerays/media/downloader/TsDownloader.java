@@ -15,6 +15,8 @@
  */
 package cyou.obliquerays.media.downloader;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.HttpURLConnection;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
@@ -32,8 +34,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import cyou.obliquerays.media.config.RadioProperties;
 import cyou.obliquerays.media.model.TsMedia;
@@ -45,7 +45,7 @@ import cyou.obliquerays.media.model.TsMediaTool;
  */
 public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Runnable {
 	/** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(TsDownloader.class.getName());
+    private static final Logger LOG = System.getLogger(TsDownloader.class.getName());
 
     /** HTTP送信クライアント */
     private final HttpClient client;
@@ -83,16 +83,16 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 	private BiFunction<HttpResponse<Path>, Throwable, Path> getHandle() {
 		return (response, e) -> {
 			if (Optional.ofNullable(e).isPresent()) {
-				LOGGER.log(Level.SEVERE, "HTTP #RESPONSE=ERROR", e);
+				LOG.log(Level.ERROR, "HTTP #RESPONSE=ERROR", e);
 				return null;
 			} else {
                 StringBuilder msg = new StringBuilder("HTTP #RESPONSE=")
                 		.append(response.statusCode()).append("  #BODY=").append(response.body());
                 if (response.statusCode() == HttpURLConnection.HTTP_OK) {
-                    LOGGER.log(Level.INFO, msg.toString());
+                	LOG.log(Level.INFO, msg.toString());
                     return response.body();
                 } else {
-                    LOGGER.log(Level.SEVERE, msg.toString());
+                	LOG.log(Level.ERROR, msg.toString());
                     return null;
                 }
 			}
@@ -110,7 +110,7 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 				if (null != tsMedia) {
 					Path tsPath = TsMediaTool.tsUriToTsPath(this.tsWorkDir, tsMedia.getTsUri());
 					if (Files.notExists(tsPath)) {
-						LOGGER.log(Level.CONFIG, "URI=" + tsMedia.getTsUri());
+						LOG.log(Level.DEBUG, "URI=" + tsMedia.getTsUri());
 						HttpRequest request = HttpRequest.newBuilder()
 				        		.uri(tsMedia.getTsUri())
 				        		.timeout(Duration.ofSeconds(60L))
@@ -127,9 +127,9 @@ public class TsDownloader extends AbstractMediaDownloader<TsMedia> implements Ru
 				}
 			}
 		} catch (InterruptedException e) {
-			LOGGER.log(Level.SEVERE, "HTTP送信クライアント実行中に割り込みを検知", e);
+			LOG.log(Level.ERROR, "HTTP送信クライアント実行中に割り込みを検知", e);
 		} catch (ExecutionException e) {
-			LOGGER.log(Level.SEVERE, "HTTP送信クライアント実行中にエラーが発生", e);
+			LOG.log(Level.ERROR, "HTTP送信クライアント実行中にエラーが発生", e);
 		}
 	}
 

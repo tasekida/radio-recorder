@@ -15,6 +15,8 @@
  */
 package cyou.obliquerays.media.model;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -24,19 +26,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import cyou.obliquerays.media.config.RadioProperties;
-import cyou.obliquerays.media.downloader.subscriber.HlsParserSubscriber;
 
 /**
  * HLSセグメントファイルを操作するクラス
  */
 public class TsMediaTool {
     /** ロガー */
-    private static final Logger LOGGER = Logger.getLogger(HlsParserSubscriber.class.getName());
+    private static final Logger LOG = System.getLogger(TsMediaTool.class.getName());
 
     /** HLS（HTTP Live Streaming）インデックスファイル（.m3u8）の正規表現 */
 	private static final Pattern M3U8_FILE_PATERN = Pattern.compile("^.+\\.m3u8$");
@@ -51,14 +50,14 @@ public class TsMediaTool {
 	 * @return セグメントファイル（.ts）の保存ファイルパス
 	 */
 	public static synchronized Path tsUriToTsPath(String _tsWorkDir, URI _tsUri) {
-		LOGGER.log(Level.CONFIG, "tsUri=" + _tsUri);
+		LOG.log(Level.DEBUG, "tsUri=" + _tsUri);
 		String[] arrUri = URI_SPLIT_PATERN.split(_tsUri.getPath());
 		String path = new StringBuilder()
 				.append(_tsWorkDir)
 				.append("/").append(arrUri[arrUri.length-2])
 				.append("-").append(arrUri[arrUri.length-1]).toString();
 		Path tspath = Path.of(path).toAbsolutePath().normalize();
-		LOGGER.log(Level.CONFIG, "tspath=" + tspath);
+		LOG.log(Level.DEBUG, "tspath=" + tspath);
 		return tspath;
 	}
 
@@ -83,7 +82,7 @@ public class TsMediaTool {
 		try {
 			URI tsUri = new URI(m3u8Uri.getScheme(), m3u8Uri.getUserInfo(), m3u8Uri.getHost()
 					, m3u8Uri.getPort(), uriBasePath.toString(), m3u8Uri.getQuery(), m3u8Uri.getFragment());
-			LOGGER.log(Level.CONFIG, "tsUri=" + tsUri);
+			LOG.log(Level.DEBUG, "tsUri=" + tsUri);
 			return tsUri;
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException(e);
