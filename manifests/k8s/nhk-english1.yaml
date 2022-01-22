@@ -5,56 +5,57 @@ metadata:
   name: radio
 ---
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   namespace: radio
-  name: nhk-english2
+  name: nhk-english
   labels:
     k8s-app: radio-recorder
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: nhk-english2
+      app: nhk-english
   template:
     metadata:
       labels:
-        app: nhk-english2
+        app: nhk-english
     spec:
       containers:
-      - name: nhk-english2
+      - name: nhk-english
         image: radio-recorder ### YOUR_IMAGE_NAME
         lifecycle:
           preStop:
             exec:
               command: ["sh", "-c", "rm -f /RadioRecProcess.lock; sleep 5"]
         volumeMounts:
-        - name: data
-          mountPath: /data/radio
-        - name: radio-config
-          mountPath: /data/config
+          - name: radio-data
+            mountPath: /data/radio
+          - name: radio-config
+            mountPath: /data/config
         env:
-        - name: TZ
-          value: Asia/Tokyo
+          - name: TZ
+            value: Asia/Tokyo
       volumes:
-        - name: data
-          hostPath:
-            path: /data/radio/english2
-        - name: radio-config
-          configMap:
-            name: radio-properties2
+      - name: radio-data
+        persistentVolumeClaim:
+          claimName: radio-pvc
+      - name: radio-config
+        configMap:
+          name: radio-properties
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: radio
-  name: radio-properties2
+  name: radio-properties
 data:
   radio.properties: |
     ### プログラムの起動モード
     ### true=常時起動して毎日設定された時間に実行、ロックファイル削除かSIGTERMで終了
     ### false=開始時間から終了時間まで一度実行して終了）
     process: true
-
+    
     ### プログラムの起動モード = PROCESSの時、録音を実行する曜日
     sunday: false
     monday: true
@@ -63,34 +64,47 @@ data:
     thursday: true
     friday: true
     saturday: false
-
+    
     ### 録音を実行する開始時間、終了時間
-    start.time: 06:15
-    end.time: 06:30
-
+    start.time: 06:00
+    end.time: 06:15
+    
     ### 録音ファイル保存ディレクトリ
     ### プログラムのフォルダを起点とした相対パスも可能
     base.dir: /data/radio
-
+    
     ### RADIOストリーミングのURL（初期値：NHK第2放送）
     radio.uri: https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8
-
+    
     ### 録音ファイル名[prefix]-[name].[suffix]
     ### [prefix]と[name]はDateTimeFormatterのパターン文字をサポート
     ### パターン文字が無効な場合はそのまま文字列として使用
     ### 【https://docs.oracle.com/javase/jp/11/docs/api/java.base/java/time/format/DateTimeFormatter.html】
-    mp3.file.prefix: english2
+    mp3.file.prefix: english1
     mp3.file.name: yyyyMMdd
     mp3.file.suffix: mp3
-
+    mp3.temp.suffix: tmp
+    
     ### PROXY設定
     proxy: false
     proxy.host: proxyHostname
     proxy.port: 8080
     proxy.account: proxyAccount
     proxy.password: proxyPassword
-
+    
     ### ラジオストリーミングの録音開始時間と終了時間の遅延時間を調整（初期値：NHK第2放送）
     ### マイナスの値をサポートします
     start.adjustment.seconds: 190
     end.adjustment.seconds: 30
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: radio
+  name: radio-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

@@ -7,7 +7,7 @@ build:
   - image: radio-recorder ### YOUR_IMAGE_NAME
     context: ./
     docker:
-      dockerfile: manifests/docker/Dockerfile.graalvm11
+      dockerfile: manifests/docker/Dockerfile.openjdk17
   tagPolicy:
     sha256: {}
   local:
@@ -15,6 +15,4 @@ build:
 deploy:
   kubectl:
     manifests:
-    - manifests/k8s/nhk-english0.yaml
-    - manifests/k8s/nhk-english2.yaml
-    - manifests/k8s/nhk-english3.yaml
+    - manifests/k8s/nhk-english1.yaml

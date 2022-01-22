@@ -1,6 +1,6 @@
-FROM alpine:latest AS build-openjdk11
+FROM alpine:latest AS build-openjdk17
 
-RUN apk --no-cache add openjdk11
+RUN apk --no-cache add openjdk17
 
 COPY ./gradle/release/* /work/
 
@@ -10,10 +10,12 @@ RUN sed -i -e '/^JLINK_VM_OPTIONS/s/$/"-Duser.language=ja -Duser.country=JP -Dus
 
 RUN sed -i -e '/^jdk.http.auth.tunneling.disabledSchemes/s/Basic//' /app/conf/net.properties
 
+RUN /usr/lib/jvm/default-jvm/bin/jpackage --type app-image -n radio-recorder -m radio.recorder/cyou.obliquerays.media.RadioRecProcess --runtime-image /app
+
 FROM alpine:latest
 
-RUN apk --no-cache add ffmpeg && rm -rf /var/cache/apk/*
+RUN apk --no-cache add ffmpeg tzdata && rm -rf /var/cache/apk/*
 
-COPY --from=build-openjdk11 /app /app
+COPY --from=build-openjdk17 /radio-recorder /radio-recorder
 
-CMD ["sh", "-c", "/app/bin/command"]
+CMD ["sh", "-c", "/radio-recorder/bin/radio-recorder"]
