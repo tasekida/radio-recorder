@@ -16,51 +16,39 @@
 package cyou.obliquerays.media.command;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
-import cyou.obliquerays.media.model.TsMedia;
-import cyou.obliquerays.media.model.TsMediaTool;
+import cyou.obliquerays.media.config.RadioProperties;
 
 /**
  * HLS（HTTP Live Streaming）セグメントファイル（.ts）を結合する処理<br>
  * 音声ファイル（.mp3）を保存
  */
-public class TsEncoder {
+public class NhkRecorder implements Callable<Path> {
     /** ロガー */
-    private static final Logger LOG = System.getLogger(TsEncoder.class.getName());
+    private static final Logger LOG = System.getLogger(NhkRecorder.class.getName());
 
     /** エンコード後のMP3ファイル */
     private final Path mp3path;
 
-    /** エンコード中のMP3ファイル */
-    private final Path mp3temp;
-
-    /** エンコード対象のメディア */
-    private final List<TsMedia> tsMedias;
-
 	/**
 	 * コンストラクタ
-	 * @param _tsMedias ダウンロード済みのHLSセグメントファイル一覧
 	 */
-	public TsEncoder(List<TsMedia> _tsMedias) {
-		this.tsMedias = Objects.requireNonNull(_tsMedias);
-		if (this.tsMedias.isEmpty()) throw new IllegalArgumentException("'tsMedias' must not be empty");
-		this.mp3path = TsMediaTool.getMp3FilePath();
-		this.mp3temp = TsMediaTool.getMp3TempPath();
+	public NhkRecorder() {
+		this.mp3path = RadioProperties.getProperties().getMp3FilePath();
 	}
 
 	/**
@@ -68,20 +56,15 @@ public class TsEncoder {
 	 * @return FFMPEGのパラメータ
 	 */
 	private List<String> getEncodingAttributes() {
+		LocalTime start = RadioProperties.getProperties().getStart();
+		LocalTime end = RadioProperties.getProperties().getEnd();
+		Duration duration = Duration.between(start, end);
+		
 		List<String> attrs = new ArrayList<>(0);
 		attrs.add("ffmpeg");
-		attrs.add("-threads");
-		attrs.add("2");
-		this.tsMedias.stream()
-			.sorted(TsMediaTool.getPathComparator())
-			.map(TsMedia::getTsPath)
-			.forEach(f -> {
-				attrs.add("-i");
-				attrs.add(f.toAbsolutePath().normalize().toString());
-			});
+		attrs.add("-i");
+		attrs.add(RadioProperties.getProperties().getRadio().toString());
 		attrs.add("-vn");
-		attrs.add("-filter_complex");
-		attrs.add("concat=n=" + this.tsMedias.size() + ":v=0:a=1");
 		attrs.add("-write_xing");
 		attrs.add("0");
 		attrs.add("-ab");
@@ -94,10 +77,10 @@ public class TsEncoder {
 		attrs.add("libmp3lame");
 		attrs.add("-f");
 		attrs.add("mp3");
-		attrs.add("-threads");
-		attrs.add("2");
+		attrs.add("-t");
+		attrs.add(String.valueOf(duration.getSeconds()));
 		attrs.add("-y");
-		attrs.add(this.mp3temp.toString());
+		attrs.add(this.mp3path.toString());
 		LOG.log(Level.DEBUG, attrs.toString());
 	 	return attrs;
 	}
@@ -114,7 +97,7 @@ public class TsEncoder {
 		Process ffmpeg = null;
 		try {
 			ProcessBuilder ffmpegBuilder = new ProcessBuilder(this.getEncodingAttributes());
-			ffmpegBuilder.directory(new File(TsMediaTool.getTsWorkDir()));
+			ffmpegBuilder.directory(Path.of(RadioProperties.getProperties().getBaseDir()).toAbsolutePath().normalize().toFile());
 			ffmpegBuilder.redirectErrorStream(true);
 			ffmpeg = ffmpegBuilder.start();
 		} catch (IOException e) {
@@ -137,8 +120,12 @@ public class TsEncoder {
 	    	ffmpeg.destroyForcibly();
 	    }
 
-		Files.move(this.mp3temp, this.mp3path, StandardCopyOption.ATOMIC_MOVE);
-
 		return this.mp3path;
+	}
+
+	@Override
+	public Path call() throws Exception {
+		Path mp3path = this.record();
+		return mp3path;
 	}
 }

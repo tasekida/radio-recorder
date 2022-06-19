@@ -20,24 +20,20 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.net.Authenticator;
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-
-import cyou.obliquerays.media.downloader.authenticator.ProxyAuthenticator;
 
 /**
  * パラメータ一覧
@@ -60,11 +56,6 @@ public final class RadioProperties extends Properties {
 	private final String mp3FilePrefix;
 	private final String mp3FileName;
 	private final String mp3FileSuffix;
-	private final String mp3TempSuffix;
-	private final boolean proxy;
-	private final boolean proxyAuth;
-	private final ProxySelector proxySelector;
-	private final Authenticator proxyAuthenticator;
 	private final long startAdjustmentSeconds;
 	private final long endAdjustmentSeconds;
 
@@ -100,29 +91,7 @@ public final class RadioProperties extends Properties {
     	this.mp3FilePrefix = Objects.requireNonNull(this.getProperty("mp3.file.prefix"));
     	this.mp3FileName = Objects.requireNonNull(this.getProperty("mp3.file.name"));
     	this.mp3FileSuffix = Objects.requireNonNull(this.getProperty("mp3.file.suffix"));
-    	this.mp3TempSuffix = Objects.requireNonNull(this.getProperty("mp3.temp.suffix"));
 
-    	this.proxy = Boolean.parseBoolean(this.getProperty("proxy"));
-    	if (this.proxy) {
-    		String proxyHost = Objects.requireNonNull(this.getProperty("proxy.host"));
-    		int proxyPort = Integer.parseInt(Objects.requireNonNull(this.getProperty("proxy.port")));
-    		InetSocketAddress inetSocketProxy = new InetSocketAddress(proxyHost, proxyPort);
-    		this.proxySelector = inetSocketProxy.isUnresolved() ? HttpClient.Builder.NO_PROXY : ProxySelector.of(inetSocketProxy);
-
-    		Optional<String> proxyAccount = Optional.ofNullable(this.getProperty("proxy.account"));
-    		Optional<String> proxyPassword = Optional.ofNullable(this.getProperty("proxy.password"));
-    		if ((proxyAccount.isPresent() && proxyPassword.isPresent())) {
-    			this.proxyAuth = true;
-    			this.proxyAuthenticator = new ProxyAuthenticator(proxyAccount.get(), proxyPassword.get());
-    		} else {
-    			this.proxyAuth = false;
-    			this.proxyAuthenticator = ProxyAuthenticator.getDefault();
-    		}
-    	} else {
-    		this.proxyAuth = false;
-    		this.proxySelector = HttpClient.Builder.NO_PROXY;
-    		this.proxyAuthenticator = ProxyAuthenticator.getDefault();
-    	}
     	this.startAdjustmentSeconds = Long.parseLong(Objects.requireNonNull(this.getProperty("start.adjustment.seconds")));
     	this.endAdjustmentSeconds = Long.parseLong(Objects.requireNonNull(this.getProperty("end.adjustment.seconds")));
 	}
@@ -130,26 +99,6 @@ public final class RadioProperties extends Properties {
 	/** @return プログラム起動モード */
 	public boolean isProcess() {
 		return this.process;
-	}
-
-	/** @return Proxy設定 */
-	public boolean isProxy() {
-		return this.proxy;
-	}
-
-	/** @return Proxy接続情報の管理 */
-	public ProxySelector getProxySelector() {
-		return this.proxySelector;
-	}
-
-	/** @return Proxy認証設定 */
-	public boolean isProxyAuth() {
-		return this.proxyAuth;
-	}
-
-	/** @return Proxy認証情報の管理 */
-	public Authenticator getProxyAuthenticator() {
-		return this.proxyAuthenticator;
 	}
 
 	/** @return RADIOストリーミングのURI */
@@ -187,15 +136,6 @@ public final class RadioProperties extends Properties {
 	 */
 	public String getMp3FileSuffix() {
 		return this.mp3FileSuffix;
-	}
-
-	/**
-	 * 録音一次ファイル名[prefix]-[name].[suffix]の[suffix]<br>
-	 * DateTimeFormatterの解析用パターンをサポート
-	 * @return 録音ファイル名の[suffix]
-	 */
-	public String getMp3TempSuffix() {
-		return this.mp3TempSuffix;
 	}
 
 	/** @return 録音開始時間 */
@@ -249,5 +189,32 @@ public final class RadioProperties extends Properties {
 			}
 		}
 		return PROP;
+	}
+	
+	/**
+	 * 録音ファイル名[prefix]-[name].[suffix]の絶対パスを取得
+	 * @return 録音ファイル名[prefix]-[name].[suffix]の絶対パス
+	 */
+	public Path getMp3FilePath () {
+		String baseDir = this.getBaseDir();
+		String mp3FilePrefix = this.getMp3FilePrefix();
+    	try {
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mp3FilePrefix);
+    		mp3FilePrefix = LocalDate.now().format(formatter);
+    	} catch (IllegalArgumentException | DateTimeException e) {
+    		// ignore
+    	}
+    	String mp3FileName = this.getMp3FileName();
+    	try {
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mp3FileName);
+    		mp3FileName = LocalDate.now().format(formatter);
+    	} catch (IllegalArgumentException | DateTimeException e) {
+    		// ignore
+    	}
+    	String mp3FileSuffix = this.getMp3FileSuffix();
+    	String mp3File = new StringBuilder(mp3FilePrefix)
+    			.append("-").append(mp3FileName)
+    			.append(".").append(mp3FileSuffix).toString();
+		return Path.of(baseDir, mp3File).toAbsolutePath().normalize();
 	}
 }
