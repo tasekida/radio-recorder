@@ -23,17 +23,14 @@ import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
 
-import cyou.obliquerays.media.command.TsEncoder;
+import cyou.obliquerays.media.command.NhkRecorder;
 import cyou.obliquerays.media.config.RadioProperties;
-import cyou.obliquerays.media.downloader.NhkDownloader;
-import cyou.obliquerays.media.model.TsMedia;
 import cyou.obliquerays.status.LockFileStatus;
 
 /**
@@ -44,7 +41,7 @@ public class RadioRecProcess {
     private static final Logger LOG = System.getLogger(RadioRecProcess.class.getName());
 
     /** スレッド管理 */
-	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(10);
+	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
 
 	/**
 	 * デフォルトコンストラクタ
@@ -61,34 +58,6 @@ public class RadioRecProcess {
 			LOG.log(Level.ERROR, "プロセス実行時存在ファイルの管理に失敗#" + lockFile, e);
 			throw e;
 		}
-	}
-
-	/**
-	 * HLSインデックスファイルに記載されているセグメントファイルをダウンロード
-	 * @return ダウンロード済みのHLSセグメントファイル
-	 * @throws InterruptedException ダウンロード中の割り込み
-	 */
-	private List<TsMedia> download() throws InterruptedException {
-		var nhkDownloader = new NhkDownloader(this.executor);
-		var future = this.executor.submit(nhkDownloader);
-		while (!future.isDone()) {
-			TimeUnit.SECONDS.sleep(1L);
-		}
-		return nhkDownloader.getTsMedias();
-	}
-
-	/**
-	 * セグメントファイルをMP3ファイルへエンコード
-	 * @param _media ダウンロード済みのHLSセグメントファイル
-	 * @return エンコード後のMP3ファイル
-	 * @throws ExecutionException FFMPEG実行失敗
-	 * @throws InterruptedException FFMPEG実行中にスレッド割り込み
-	 * @throws IOException FFMPEG起動失敗
-	 */
-	private Path encode(List<TsMedia> _media) throws IOException, InterruptedException, ExecutionException {
-		TsEncoder recorder = new TsEncoder(_media);
-		Path result = recorder.record();
-		return result;
 	}
 
 	/**
@@ -113,10 +82,8 @@ public class RadioRecProcess {
 					continue;
 				}
 
-				List<TsMedia> media = this.download();
-				media.stream().forEach(tsMedia -> LOG.log(Level.DEBUG, "downloaded=" + tsMedia));
-				Path mp3 = this.encode(media);
-				LOG.log(Level.INFO, "録音ファイル = "+ mp3);
+				Future<Path> future = this.executor.submit(new NhkRecorder());
+				LOG.log(Level.INFO, "録音ファイル = "+ future.get());
 
 			} while (RadioProperties.getProperties().isProcess());
 
@@ -127,9 +94,9 @@ public class RadioRecProcess {
 		} finally {
 
 			this.executor.shutdown();
-			if (!this.executor.awaitTermination(10L, TimeUnit.SECONDS) && !this.executor.isTerminated())
+			if (!this.executor.awaitTermination(10L, TimeUnit.SECONDS) && !this.executor.isTerminated()) {
 				this.executor.shutdownNow();
-
+			}
 		}
 	}
 

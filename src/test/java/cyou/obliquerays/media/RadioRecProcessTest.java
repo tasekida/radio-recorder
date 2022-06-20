@@ -19,12 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.LogManager;
 
 import org.junit.jupiter.api.AfterAll;
@@ -36,8 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
 
-import cyou.obliquerays.media.model.TsMedia;
-import cyou.obliquerays.media.model.TsMediaTool;
+import cyou.obliquerays.media.config.RadioProperties;
 
 /**
  * RedioRecProcessのUnitTest
@@ -70,11 +66,10 @@ class RadioRecProcessTest {
 		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 	         public boolean accept(Path file) throws IOException {
 	        	 String fileName = file.getFileName().toString();
-//	             return fileName.matches("^.+\\.ts$") || fileName.matches("^.+\\.mp3$");
-	             return fileName.matches("^.+\\.ts$");
+	             return fileName.matches("^.+\\.mp3$");
 	         }
 	    };
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of(TsMediaTool.getTsWorkDir()), filter)) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Path.of(RadioProperties.getProperties().getBaseDir()), filter)) {
 			stream.forEach(t -> {
 				try {
 					Files.delete(t);
@@ -95,23 +90,6 @@ class RadioRecProcessTest {
 	void testMainSuccess01() throws Exception {
 		RadioRecProcess.main(null);
 
-		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-	        public boolean accept(Path file) throws IOException {
-	            return file.toString().matches("^.+\\.ts$");
-	        }
-	    };
-	    List<TsMedia> media = new ArrayList<>();
-	    try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Path.of(TsMediaTool.getTsWorkDir()), filter)) {
-	    	dirStream.forEach(path -> {
-	    		TsMedia ts = new TsMedia(URI.create("https://nhkradioakr2-i.akamaihd.net/hls/live/511929/1-r2/1-r2-01.m3u8"));
-	    		ts.setTsPath(path);
-	    		media.add(ts);
-	    	});
-	    }
-
-		media.stream()
-	    	.peek(ts -> LOG.log(Level.INFO, "media=" + ts))
-			.forEach(ts -> Assertions.assertNotNull(ts.getTsPath()));
-		Assertions.assertTrue(Files.exists(TsMediaTool.getMp3FilePath()));
+		Assertions.assertTrue(Files.exists(RadioProperties.getProperties().getMp3FilePath()));
 	}
 }
